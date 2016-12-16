@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>会员动态查询</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet">
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="../../js/public/Base.js" type="text/javascript"></script>
+    <script src="../../js/smsplat/mess_set.js" type="text/javascript"></script>
+</head>
+<body>
+<h1 class="report_h1" style="width: 99%;">
+    <b>智能设置</b>
+</h1>
+<table class="report_table" id="tbList" style="background:#fff;width:99%" cellspacing="1" cellpadding="1">
+    <thead>
+    <tr>
+        <th width="100">短信类型</th>
+        <th width="">模板内容</th>
+        <th width="100">是否启用</th>
+        <th width="140">发送时间</th>
+        <th width="100">操作</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+        <td>会员生日</td>
+        <td style="text-align:left">尊敬的[会员姓名],感谢您对本店的支持,会员类型：[会员类型],会员卡号:[会员卡号],生日是：[会员生日]</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_0" href="#"
+                                           onclick="TemplateEdit(4001,1,'会员生日','True','True','动态标签：[会员类型] [会员卡号] [会员姓名] [会员生日]','False','M001')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>节日提醒</td>
+        <td style="text-align:left">尊敬的[会员姓名],感谢您对本店的支持,会员类型：[会员类型],会员卡号:[会员卡号],[节日]快乐！</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_1" href="#"
+                                           onclick="TemplateEdit(4002,3,'节日提醒','False','False','动态标签：[会员类型] [会员卡号] [会员姓名] [节日]','False','M002')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>会员发卡</td>
+        <td style="text-align:left">尊敬的[会员姓名],感谢您对本店的支持，您的会员类型是：[会员类型]，会员卡号：[会员卡号]，发卡时间：[发卡时间]</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_2" href="#"
+                                           onclick="TemplateEdit(4003,4,'会员发卡','False','False','动态标签：[会员类型] [会员卡号] [会员姓名] [发卡时间]','False','M003')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>会员充值</td>
+        <td style="text-align:left">尊敬的[会员姓名],感谢您对本店的支持，您的会员类型是：[会员类型]，会员卡号：[会员卡号]，充值金额：[充值金额]，卡余额：[卡余额],充值时间：[充值时间]
+        </td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_3" href="#"
+                                           onclick="TemplateEdit(4004,5,'会员充值','False','False','动态标签：[会员类型] [会员卡号] [会员姓名] [充值金额] [卡余额] [充值时间]','False','M004')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>会员消费</td>
+        <td style="text-align:left">
+            尊敬的[会员姓名],感谢您对本店的支持，您的会员类型是：[会员类型]，会员卡号：[会员卡号]，消费金额：[消费金额]，刷卡金额：[刷卡金额],卡余额:[卡余额],消费时间：[消费时间]
+        </td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_4" href="#"
+                                           onclick="TemplateEdit(4005,6,'会员消费','False','False','动态标签：[会员类型] [会员卡号] [会员姓名] [消费金额] [刷卡金额] [卡余额] [消费时间]','False','M005')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>积分兑换</td>
+        <td style="text-align:left">尊敬的[会员姓名],感谢您对本店的支持，您的会员类型是：[会员类型]，会员卡号：[会员卡号]，兑换积分：[兑换积分]，卡积分：[卡积分],兑换物品:[兑换物品]
+            兑换时间：[兑换时间]
+        </td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_5" href="#"
+                                           onclick="TemplateEdit(4006,10,'积分兑换','False','False','动态标签：[会员类型] [会员卡号] [会员姓名] [兑换积分] [卡积分] [兑换物品] [兑换时间]','False','M006')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>订单提醒</td>
+        <td style="text-align:left">尊敬的[预订人],感谢您对本店的支持，您的预订来期是:[预订来期]，预订房型是:[预订房型]，预订房数：[预订房数]间。</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_6" href="#"
+                                           onclick="TemplateEdit(4007,11,'订单提醒','False','False','动态标签：[预订人] [预订来期] [预订房型] [预订房数]','False','M007')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>入住通知</td>
+        <td style="text-align:left">尊敬的[姓名]，感谢您对本店的支持，开房类型:[房间类型],房价:[房价],开房数:[开房数]间,押金:[押金].</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_7" href="#"
+                                           onclick="TemplateEdit(4008,13,'入住通知','False','False','动态标签：[房间类型] [房价] [开房数] [押金]','False','M008')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>离店问候</td>
+        <td style="text-align:left">尊敬的[姓名],感谢您对本店的支持,您在本店入住:[入住天数]天,消费总额:[消费总额]</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_8" href="#"
+                                           onclick="TemplateEdit(4009,15,'离店问候','False','False','动态标签：[入住天数] [消费总额]','False','M009')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>日营业情况</td>
+        <td style="text-align:left">营业日:[营业日] 入住数:[入住数] 入住率:[入住率] 总房租:[总房租] 总营业额:[总营业额] 开卡数:[开卡数] 充值金额:[充值金额]</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_9" href="#"
+                                           onclick="TemplateEdit(4010,16,'日营业情况','False','False','动态标签：[营业日] [入住数] [入住率] [总房租] [总消费] [总营业额] [开卡数] [充值金额]','True','M010')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>月营业情况</td>
+        <td style="text-align:left">营业月:[营业月] 入住数:[入住数] 入住率:[入住率] 总房租:[总房租] 总消费:[总消费] 总营业额:[总营业额] 开卡数:[开卡数]
+            充值金额:[充值金额]
+        </td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_10" href="#"
+                                           onclick="TemplateEdit(4011,19,'月营业情况','False','False','动态标签：[营业月] [入住数] [入住率] [总房租] [总消费] [总营业额] [开卡数] [充值金额]','True','M011')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>打扫订单提醒</td>
+        <td style="text-align:left">[酒店名称]，[房间号]房间有打扫请求，快来抢单</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_11" href="#"
+                                           onclick="TemplateEdit(4012,20,'打扫订单提醒','False','False','动态标签：[酒店名称] [房间号]','True','M012')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    <tr>
+        <td>预退房提醒</td>
+        <td style="text-align:left">[酒店名称]，[房间号]房间有预退房请求，预退房时间：[退房时间]，速去查房</td>
+        <td>否</td>
+        <td></td>
+        <td><img src="../../images/037.gif" width="9" height="9"><span
+                class="STYLE1"> [</span><a id="a_12" href="#"
+                                           onclick="TemplateEdit(4013,21,'预退房提醒','False','False','动态标签：[酒店名称] [房间号][退房时间]','True','M013')">编辑</a><span
+                class="STYLE1">]</span></td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>

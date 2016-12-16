@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet" />
+    <link href="../../js/jquery/jquery.datetimepicker.css" rel="stylesheet" />
+    <script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="../../js/public/Base.js"></script>
+    <script type="text/javascript" src="../../js/jquery/jquery.datetimepicker.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/edit_type.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/IllegalChar.js"></script>
+    <script type="text/javascript">
+       
+    </script>
+</head>
+<body>
+    <div class="message_in" style="width:600px">
+        <div style="width:100%;float:left">
+            <h1 class="message_infor">智能编辑</h1>
+                <div class="errortips" id="div_tips" style="margin-left:40px;display:inline;float:left"></div>
+        </div>
+        <input type="hidden" id="UserId" />
+        <ul class="message_infor" style="width:100%">
+            <li>
+                <label><b>短信类型：</b></label>
+                <input type="text" style="width:300px;" id="txt_categoryname" disabled="disabled" />
+            </li>
+            <li>
+                <label><b>模板内容：</b></label>
+                <textarea style="width:400px; height:120px" id="txt_categorycontent"></textarea>
+            </li>
+            <li>
+                <label><b>说明：</b></label>
+                <span id="txt_remark" style="float:left; width:400px"></span>
+            </li>
+            <li>
+                <label><b>手机号码：</b></label>
+                <input id="txt_mobile" type="text" style="width:300px" onblur="checkMobile(this)"/>多个号码用","隔开
+            </li>
+            <li>
+                <label><b>发送时间：</b></label>
+                <input id="txt_shour" type="text" style="width:100px" onblur="setDateNull(this)"/>
+                <label style="width:20px; text-align:center">至</label>
+                <input id="txt_ehour" type="text" style="width:100px"/>
+                <a id="h_set" href="#" style=" margin-left:20px;" onclick="openHoliday()">节日设置</a>
+
+            </li>
+            <li>
+                <div class="calendar">
+                    <ul>
+                        <li>阳历:</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0101" />元旦</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0214" />情人</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0308" />三八</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0501" />五一</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0601" />六一</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0701" />建党</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0801" />建军</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="0910" />教师</li>                   
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="1001" />国庆</li>
+                        <li><input type="checkbox" name="cbx_yangli"  class="cbk" value="1225" />圣诞</li>
+                    </ul>   
+                       <ul>
+                            <li>阴历:</li>
+                            <li><input type="checkbox" name="cbx_yinli"  class="cbk" value="0101" />春节</li>
+                            <li><input type="checkbox" name="cbx_yinli"  class="cbk" value="0115" />元宵</li>
+                            <li><input type="checkbox" name="cbx_yinli"  class="cbk" value="0505" />端午</li>
+                            <li><input type="checkbox" name="cbx_yinli"  class="cbk" value="0707" />七夕</li>
+                            <li><input type="checkbox" name="cbx_yinli"  class="cbk" value="0815" />中秋</li>
+
+                       </ul>
+                </div>
+            </li>
+
+            <li>
+                <label><b>提前发送：</b></label>
+                <input id="txt_days" type="text" style="width:50px" value="0" onblur="checknumber(this)"/>
+                <label style="width:60px; text-align:left">&nbsp;天</label>
+            </li>
+            <li>
+                <label><b>状态：</b></label>
+                <input id="rdo_yes" name="rdo_status" type="radio" style="width:14px;border:0px;background:none" value="0"/><label style="width:60px; text-align:left">启用</label>
+                <input id="rdo_no" name="rdo_status" type="radio" style="width:14px;border:0px;background:none" value="1"/><label style="width:60px; text-align:left">关闭</label></li>
+            <li>
+                <label>&nbsp;</label>
+                <input id="btn_sure" type="button" value="确 定" class="bus_add"/>
+                <input id="btn_cancel" type="button" value="关 闭" class="bus_dell" onclick="closeWin()" />
+            </li>
+        </ul>
+
+
+    </div>
+</body>
+</html>

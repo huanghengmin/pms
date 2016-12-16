@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>会员动态查询</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="../../js/public/Base.js"></script>
+    <script src="../../js/public/Paging.js"></script>
+    <script src="../../js/jquery/jquery.datetimepicker.js"></script>
+    <link href="../../js/jquery/jquery.datetimepicker.css" rel="stylesheet" />
+    <script src="../../js/smsplat/mess_list.js"></script>
+</head>
+<body>
+    <h1 class="report_h1" style="width: 99%;">
+        <b>短信列表</b>
+        <input type="hidden" id="Status" />
+        <b class="rq">
+            <div class="ftt_search fontYaHei">
+                <label>时间：</label>
+                <input type="text" id="StartDate" style="width: 120px; margin-right: 5px" />
+                <label>至</label>
+                <input type="text" id="EndDate" style="width: 120px" />
+                <label>类型：</label>
+                <select id="LogType">
+                    <option value="">全部</option>
+                    <option value="会员生日">会员生日</option>
+                    <option value="节日提醒">节日提醒</option>
+                    <option value="会员发卡">会员发卡</option>
+                    <option value="会员充值">会员充值</option>
+                    <option value="会员消费">会员消费</option>
+                    <option value="积分兑换">积分兑换</option>
+                    <option value="订单提醒">订单提醒</option>
+                    <option value="入住通知">入住通知</option>
+                    <option value="离店问候">离店问候</option>
+                    <option value="营业情况">营业情况</option>
+                </select>
+                <label>手机号码：</label>
+                <input type="text" id="Mobile" style="width: 100px" />
+                <input type="button" class="qtantj" id="btnSearch" value="查询" />
+            </div>
+        </b>
+    </h1>
+    <table cellpadding="1" cellspacing="1" class="report_table" id="tbList" style="background: #fff; width: 99%">
+        <thead>
+            <tr>
+                <th width="50"><input type='checkbox' name='SmsAll' onchange="checkAllByName(this,'SmsId');"/></th>
+                <th width="100">接收人</th>
+                <th width="100">手机号码</th>
+                <th width="100">类型</th>
+                <th width="">内容</th>
+                <th width="100">计费条数</th>
+                <th width="120">时间</th>
+                <th width="80">状态</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="ruzhu_infor" style="width: 99%; padding: 0px;">
+        <div class="types">
+            <ul style="float: left; width: 500px; margin-top: -10px">
+                <li>
+                    <input type="button" class="bus_add " tag="1" id="btnResend" value="重发" /></li>
+                <li>
+                    <input type="button" class="bus_add " tag="2" id="btnDel" value="删除" /></li>
+            </ul>
+            <ul style="float: right; width: 400px;">
+                <div class="page">
+                    <ul style="float: right; width: 400px;">
+                        <li style="display: inline; float: right; margin: 0px" id="pager"></li>
+                    </ul>
+                </div>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

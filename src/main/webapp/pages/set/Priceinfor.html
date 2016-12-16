@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/styles/tch.css" rel="stylesheet" />
+    <script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+    <!--<script type="text/javascript" src="/Scripts/public/Base.js"></script>-->
+
+    <script type="text/javascript" src="../../js/set/ChainVersionBase.js"></script>
+    <script type="text/javascript" src="../../js/public/common.js"></script>
+    <script type="text/javascript" src="../../js/set/priceinfor.js"></script>
+
+</head>
+<body>
+<!--费用弹出窗口-->
+<div class="quanxian">
+    <div class="line">编辑商品费用</div>
+    <ul>
+        <li>
+            <label><b style="color:red;margin-right: 5px;">*</b>编号：</label>
+            <input type="text" id="txtBH" maxlength="10" />
+            <input type="hidden" id="ShopBH" />
+        </li>
+        <li>
+            <label><b style="color:red;margin-right: 5px;">*</b>费用名称：</label><input type="text" id="txtName" maxlength="30" />
+        </li>
+        <li>
+            <label>费用类别：</label>
+            <select id="selSPFL"></select>
+        </li>
+        <li>
+            <label>拼音码：</label><input id="txtPYM" type="text" maxlength="50" /></li>
+        <li>
+            <label><b style="color:red;margin-right: 5px;">*</b>单价：</label><input id="txtPrice" type="text" maxlength="6" /></li>
+        <li id="listatus">
+            <label>状态：</label>
+            <input type="radio" name="radStatus" id="0" value="0" class="radio" checked="checked" /><em>使用</em>
+            <input type="radio" name="radStatus" id="1" value="1" class="radio" /><em>停用</em>
+        </li>
+        <li>
+            <label>备注：</label><textarea id="txtRemark"></textarea></li>
+        <li>
+            <label>&nbsp;</label><input type="button" id="btnSave" value="保存" class="bus_add" /></li>
+    </ul>
+    <input type="hidden" id="hidid" value="0" />
+</div>
+</body>
+</html>
+

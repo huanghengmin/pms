@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="最好用的酒店管理系统|操作简单的酒店管理软件|怎么选择酒店管理系统" />
+    <meta name="description" content="酒店住宿自住服务系统-PMS" />
+    <title>酒店管理系统</title>
+    <link href="images/favicon.png" rel="png" />
+    <link href="css/index/loginReg.css" type="text/css" rel="stylesheet" />
+    <link href="css/animate.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="js/global.js"></script>
+    <script type="text/javascript" src="js/public/Base.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/tab.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            if (top.location.href != document.location.href) {
+                top.location.href = document.location.href;
+                return;
+            }
+//            if (document.location.href.indexOf('http://localhost:8080/pms/') == 0) {
+//                document.location = "http://localhost:8080/pms/login.html";
+//                return;
+//            }
+
+            $("#lblTest").click(function () {
+                var acc = 'T00' + Math.ceil(Math.random() * 5).toString();
+                $("#txtUserNo").val(acc);
+                $("#txtPsw").val("123456");
+                alert("试用帐号已自动填写，请填写验证码后登录即可试用!");
+                $("#txtCode").focus();
+            });
+
+            $("#form1").submit(function () {
+                var userno = $("#txtUserNo").val();
+                var psw = $("#txtPsw").val();
+                var code = $("#txtCode").val();
+                var autologon = $("#chkAutoLogon").attr('checked') == "checked";
+                var userAgent = window.navigator.userAgent.toLowerCase();
+                var isclient = userAgent == "jchotelclient";
+
+//                var result = checkdata(userno, psw, code);
+                var result = true;
+                if (!result) { return false; }
+                var macaddress = "";
+                if (isclient) {
+                    ReadMacAddress(function (i, mac) {
+                        macaddress = mac;
+                    })
+                }
+                var classname = "login";
+                var method = "userLogin";
+                var url = "/pms/login/";
+                postRequest(url, { userno: userno, psw: psw, code: code,
+                    autologon: autologon, isclient: isclient,
+                    macaddress: macaddress },classname,method, false, function (res) {
+//                    var res = {State:{"Success":true,"Des":null,"Errkey":null},Data:{"IsHotel":true,"PmsVer":"1"}};
+                    if (!res.State.Success) {   //不正确的
+                        if (res.State.Errkey == "Ip判断失误") {
+                            layer.open({
+                                type: 2, //窗口类型
+                                title: "", //窗口标题
+                                maxmin: false, //是否显示最大化最小化按钮
+                                shadeClose: false, //点击遮罩是否会关闭层
+                                area: ['420px', '300px'], //窗口大小
+                                scrollbar: false, //打开后锁定父窗口滚动
+                                content: ['../BasicInfo/NeedIp.html?sp=' + res.Data.ShopId + '&cm=' + res.Data.ComId + '&r=' + Math.random(), "no"], //内容URL
+                                skin: 'layui-layer-jc'
+                            });
+                            return false;
+                        } else if (res.State.Errkey == "连锁用户") {
+                            alert('该酒店已转成连锁酒店用户，即将跳转到连锁登录地址');
+                            top.location.href = "http://localhost:8080/pms/";
+                        }
+                        $(".tish").html(res.State.Errkey);
+                        $(".tish").show();
+                        refreshCode();
+                        return false;
+                    }
+                    if (res.Data.PmsVer == "2") {//极速版
+                        document.location = "/TopSpeed/main.html";
+                    } else if (res.Data.IsHotel) {//完整版
+                        document.location = "./classesselect.html";
+                    } else {
+                        document.location = "./classesselect.html?usertype=1";
+                    }
+                });
+                return false;
+            });
+//            AutoLogon();
+            setInterval(function () { window.location.reload(); }, 60000 * 20);//20分钟刷新一次（主要原因是轮播图定位bug）
+        });
+    </script>
+
+    <script type="text/javascript">
+        function refreshCode() {
+            var num = parseInt(Math.random() * 9999 + 1).toString();
+            document.getElementById("imgCode").src = '/basicinfo/validcode.ashx?rd=' + num;
+        }
+
+        ///检测数据的合法性
+        function checkdata(userno, pwd, code) {
+            if (userno == '') {
+                $(".tish").html("用户名不能为空");
+                $("#txtUserNo").focus();
+                $(".tish").show();
+                return false;
+            }
+            if (pwd == '') {
+                $(".tish").html("密码不能为空");
+                $("#txtPsw").focus();
+                $(".tish").show();
+                return false;
+            }
+            $(".tish").hide();
+            return true;
+        }
+
+        ///浏览器兼容性
+        var iever = getbrowerverion();
+        if (iever == "ie6.0" || iever == "ie7.0") {
+            document.location = "/BasicInfo/CheckExplorer.html";
+        }
+
+        function AutoLogon() {
+            var url = "/Services/SsoService.ashx?ra=" + Math.random();
+            var data = postSynRequest(url, null, "", "CheckIsAutoLogon");
+            if (!data.State.Success) {
+                return;
+            }
+            var userAgent = window.navigator.userAgent.toLowerCase();
+            var isclient = userAgent == "jchotelclient";
+
+            var data1 = postSynRequest(url, { isauto: "1", autologon: "true", isclient: isclient }, "", "UserLogin");
+            if (!data1.State.Success) {
+                return false;
+            }
+            document.location = "/classesselect.html";
+        }
+    </script>
+
+
+    <!--banner-->
+    <script type="text/javascript">
+        $(function () {
+            try
+            {
+                var $window = $(window),
+                        window_width = $window.width();
+                if (window_width < 1200) { $('#js_banner, #js_banner_img li').width(1200); }
+                else { $('#js_banner, #js_banner_img li').width(window_width); }
+
+
+                var urlParam = G.util.parse.url(),
+                        startFrame = 0;
+                if (urlParam.search && ('banner' in urlParam.search)) {
+                    startFrame = (parseInt(urlParam.search['banner']) - 1) || 0;
+                }
+
+                new $.Tab({/*添加圆点按钮*/
+                    target: $('#js_banner_img li'),
+                    effect: 'slide3d',
+                    animateTime: 1000,
+                    stay: 4000,
+                    playTo: startFrame,
+                    autoPlay: true,
+                    merge: true,
+                    prevBtn: $('#js_banner_pre'),
+                    nextBtn: $('#js_banner_next')
+                });
+                $('#js_banner_img').css('left', '-' + (window_width * startFrame) + 'px');
+            }
+            catch (e) { alert(e);}
+        });
+    </script>
+
+    <!--第一屏-->
+    <script type="text/javascript">
+        var n = 0, count;
+        var t;
+        $(document).ready(function () {
+            count = $("#banner_list .divs").length;
+            $("#banner_list .divs:not(:first-child)").hide();
+            $("#banner .fl li").mouseenter(function () {
+                //console.log("mouseenter");
+                var i = $(this).index();
+                n = i;
+                if (i >= count) return;
+                $("#banner_list .divs").filter(":visible").fadeOut(10).parent().children().eq(i).fadeIn(10);
+                $("#banner").css("background", "");
+                $(this).toggleClass("on");
+                $(this).siblings().removeAttr("class");
+                window.clearInterval(t);
+            }).mouseleave(function () {
+                        //console.log("mouseleave");
+                        t = setInterval("showAuto()", 3000);
+                    }).keydown(function () {
+                        //console.log("keydown");
+                        var i = $(this).index();
+                        n = i;
+                        if (i >= count) return;
+                        $("#banner_list .divs").filter(":visible").fadeOut(10).parent().children().eq(i).fadeIn(10);
+                        $("#banner").css("background", "");
+                        $(this).toggleClass("on");
+                        $(this).siblings().removeAttr("class");
+                    });
+            t = setInterval("showAuto()", 3000);
+        })
+        function showAuto() {
+            n = n >= (count - 1) ? 0 : ++n;
+            $("#banner .fl li").eq(n).trigger('keydown');
+        }
+    </script>
+
+    <!--第三屏-->
+    <script type="text/javascript">
+        $(window).scroll(function () {
+            var Yoffset = window.pageYOffset || document.documentElement.scrollTop;
+            if (Yoffset > 1600) {
+                $(".anitam img").addClass("animated zoomInUp").show();
+                setTimeout(function () { $(".anitam .line_1").addClass("animated fadeInLeftBig").show(); }, 1000);
+                setTimeout(function () { $(".anitam h1").addClass("animated bounceInRight").show(); }, 1800);
+                setTimeout(function () { $(".anitam .line_2").addClass("animated fadeInLeftBig").show(); }, 2400);
+                setTimeout(function () { $(".anitam p").addClass("animated bounceInRight").show(); }, 2800);
+                setTimeout(function () { $(".anitam span").addClass("animated rubberBand").show(); }, 3400);
+                setTimeout(function () { $(".anitam font").addClass("animated tada").show(); }, 3800);
+            } else {
+                $(".anitam img").removeClass("animated zoomInUp").hide();
+                $(".anitam .line_1").removeClass("animated fadeInLeftBig").hide();
+                $(".anitam h1").removeClass("animated bounceInRight").hide();
+                $(".anitam .line_2").removeClass("animated fadeInLeftBig").hide();
+                $(".anitam p").removeClass("animated bounceInRight").hide();
+                $(".anitam span").removeClass("animated rubberBand").hide();
+                $(".anitam font").removeClass("animated tada").hide();
+            };
+        });
+    </script>
+
+    <!--第四屏-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".hotel_number").mousemove(function () {
+                $(".selects").removeClass("selects");
+                $(this).addClass("selects");
+            })
+        })
+    </script>
+</head>
+<body>
+    <!--头部-->
+    <div class="map_head" style="border-bottom:0px">
+        <div class="head">
+            <img src="images/login/logo.jpg" />
+            <ul class="nav">
+                <li style="position:relative">
+                    <a  href="http://85160.jdd365.cn/productlist/product_1.html" target="_blank">酒店系统</a>
+                    <img src="images/login/ty.png" style="position:absolute; left:28px; top:6px" /></li>
+                <li style="position:relative">
+                    <a  href="http://pan.baidu.com/s/1skHWQ3F" target="_blank">下载客户端</a>
+                    <img src="images/login/down.png" style="position:absolute; left:30px; top:6px" /></li>
+                <li style="position:relative"><a href="http://g.jdd365.cn/">连锁版</a><img src="images/hot.png" style="position:absolute; right:18px; top:10px" />
+                </li>
+                <li><a href="/basicinfo/contact.html">联系我们</a></li>
+                <li><a href="/basicinfo/help.html">帮助中心</a></li>
+                <li><a href="javascript:void(0);">产品服务</a>
+                    <ul class="subs">
+                        <li><a href="/basicinfo/product.html" target="_blank">PMS</a></li>
+                        <li><a href="/basicinfo/price_tag.html" target="_blank">房价牌</a></li>
+                        <!--<li><a href="/basicinfo/micro_hotel.html" target="_blank">微信订房</a></li>-->
+                        <!--<li><a href="/basicinfo/face_to_face.html" target="_blank">扫码抢闪付</a></li>-->
+                        <!--<li><a href="/basicinfo/invoice.html" target="_blank">增值税发票</a></li>-->
+                        <!--<li><a href="/basicinfo/bussiness.html" target="_blank">软件项目定制</a></li>-->
+                        <!--<li><a href="http://yys.jdd365.cn/" target="_blank">直连OTA订单</a></li>-->
+                        <!--<li><a href="/basicinfo/To_shout.html" target="_blank">去呼呼门锁</a></li>-->
+                        <!--<li><a href="/basicinfo/hui_pin.html" target="_blank">客栈慧评</a></li>-->
+                    </ul></li>
+                <li><a href="/basicinfo/about.html">公司介绍</a></li>
+                <li class="select"><a href="/">首页</a></li></ul>
+        </div>
+    </div>
+
+
+    <div class="costs_1" style="position:fixed; top:50%; left:50%; margin-left:-400px;margin-top:-250px; display:none; z-index: 999999;">
+        <div style="position:relative">
+            <img width="800"  border="0" src="images/login/to_3.png" alt="" />
+            <div class="costs_3" style="position: absolute; top: -40px; right:10px; cursor: pointer; z-index: 999999;width:30px; height:30px; background:url(images/login/to_4.png) 0px 0px no-repeat" ></div>
+        </div>
+    </div>
+    <div class="costs_back" style="background: rgb(0, 0, 0) none repeat scroll 0% 0%; position: fixed; left: 0px; top: 0px; right: 0px; bottom: 0px; opacity: 0.8; display:none; z-index: 999998;"></div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#app_s").click(function () {
+                $(".costs_back").show();
+                $(".costs_1").show();
+            });
+            $(".costs_3").click(function () {
+                $(".costs_1").hide();
+                $(".costs_back").hide();
+            });
+        });
+    </script>
+
+    <!--banner图-->
+    <div class="banner_login">
+        <!-- 代码开始 -->
+        <div id="js_banner" class="banner">
+            <ul id="js_banner_img" class="banner_img clear">
+                <!--直连去哪儿-->
+                <li class="bgli04" style="background:url(images/login/direct_01_02.jpg) center no-repeat">
+                    <a href="/basicinfo/direct.html" target="_blank">
+                        <div class="banner_inner">
+                            <div class="child child13" data-z="2" style="top:10px;left:-110px"><img class="" src="images/login/direct_01_01.png" /></div>
+                        </div></a>
+                </li>
+                <!--慧评-->
+                <li class="bgli04" style="background:url(images/login/huip_01.jpg) center no-repeat">
+                    <a href="/basicinfo/hui_pin.html" target="_blank">
+                        <div class="banner_inner">
+                            <div class="child child13" data-z="2" style="top:80px;left:-150px"><img class="" src="images/login/huip_02.png" /></div>
+                        </div></a>
+                </li>
+                <!--去呼呼门锁
+                <li class="bgli04" style="background:url(images/login/qhh_2.jpg) center no-repeat">
+                    <a href="/basicinfo/To_shout.html" target="_blank">
+                     <div class="banner_inner">
+                         <div class="child child13" data-z="2" style="top:0px;left:-300px"><img class="" src="images/login/qhh_1.png" /></div>
+                     </div></a>
+                </li>-->
+                <!--<li class="bgli04" style="background:url(images/login/dmsf_2.jpg) center no-repeat">
+                    <a href="/basicinfo/scan_code.html" target="_blank">
+                     <div class="banner_inner">
+                         <div class="child child13" data-z="2" style="top:30px;left:-100px"><img class="" src="images/login/dmsf_1.png" /></div>
+                     </div></a>
+                </li>-->
+                <!--房价牌-->
+                <li class="bgli04" style="background:url(images/login/fjp_1.jpg) center no-repeat">
+                    <a href="/basicinfo/price_tag.html" target="_blank">
+                        <div class="banner_inner">
+                            <div class="child child13" data-z="2" style="top:70px;left:-140px"><img class="" src="images/login/fjp_2.png" /></div>
+                        </div></a>
+                </li>
+                <!--营销平台-->
+                <li class="bgli04" style="background:url(images/login/yxpt_1.jpg) center no-repeat">
+                    <a href="/basicinfo/bussiness.html" target="_blank">
+                        <div class="banner_inner">
+                            <div class="child child13" data-z="2" style="top:100px;left:0px"><img class="" src="images/login/yxpt_2.png" /></div>
+                        </div></a>
+                </li>
+                <!--微酒店-->
+                <!--<li class="bgli04" style="background:url(images/login/wjd_1.jpg) center no-repeat">-->
+                    <!--<a href="/basicinfo/micro_hotel.html" target="_blank">-->
+                        <!--<div class="banner_inner">-->
+                            <!--<div class="child child13" data-z="2" style="top:20px;"><img class="" src="images/login/wjd_2.png" /></div>-->
+                        <!--</div>-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--入住通-->
+                <!--           <li class="bgli04" style="background:url(images/login/y_1.jpg) center no-repeat">
+                               <a href="http://f.sojump.cn/jq/6903377.aspx" target="_blank">
+                                <div class="banner_inner">
+                                    <div class="child child13" data-z="2" style="top:30px;"><img class="" src="images/login/y_11.png" /></div>
+                                </div></a>
+                            </li>-->
+                <!--腾云管理系统-->
+                <!--<li class="bgli04" style="background:url(images/login/ty_1.jpg) center no-repeat"><a href="http://85160.com/productlist/product_1.html" target="_blank">-->
+                    <!--<div class="banner_inner">-->
+                        <!--<div class="child child13" data-z="2" style="top:88px; left:80px"><img class="" src="images/login/ty_2.png" /></div>-->
+                    <!--</div></a>-->
+                <!--</li>-->
+            </ul>
+            <div class="banner_common">
+                <a id="js_banner_pre" href="javascript:;" class="banner_pre"></a>
+                <a id="js_banner_next" href="javascript:;" class="banner_next"></a>
+            </div>
+        </div>
+        <!-- 代码结束 -->
+        <div class="login_input_poreation">
+            <form id="form1">
+                <div class="login_input">
+                    <ul>
+                        <li><h1>快速登录</h1>
+                            <a href="javascript:void(0);" class="down" id="app_s" style="color:#000; font-weight:bold; text-align:center; line-height:30px; height:30px;border-radius:3px;margin:0px;border:0px solid #66afe9; background:url(images/login/tel_s.png) left center no-repeat; text-indent:20px; font-size:14px">App下载</a></li>
+                        <li><label>用户名：</label><input type="text" placeholder="用户名" id="txtUserNo" maxlength="20"/></li>
+                        <li><label>密&nbsp;&nbsp;码：</label><input type="password" placeholder="密码" id="txtPsw" maxlength="20"/></li>
+                        <li><label>验证码：</label><input type="text" placeholder="验证码" class="yzm" id="txtCode" maxlength="5"/>
+                            <img id="imgCode" src="/basicinfo/validcode.ashx" alt="" onclick="refreshCode();" /></li>
+                        <li class="pass fontYaHei"><input type="checkbox" id="chkAutoLogon" class="check"/><span>下次自动登录</span><a href="/basicinfo/ForgotPwd.html">忘记密码？</a></li>
+                        <li><input type="submit" value="登 录" class="butns" id="btnLogin"/>
+                            <input type="button" value="免费试用" class="butns_reg" style="float:right;" onclick="window.location = '/basicinfo/Registered.html';"/>
+                            <!--<input type="button" value="在线试用" class="butns" style="float:right" id="lblTest"/></li>-->
+                            <!--<li class="regs fontYaHei">还没账号，<a href="/basicinfo/Registered.html">立即注册>></a></li>-->
+                            <!--<li style="margin-top:10px"><input type="button" value="立即注册" class="butns" style="width:100%" onclick="window.location = '/basicinfo/Registered.html';"/></li>-->
+                        <li class="tish" style="color:#f00;margin-top:5px"></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--第一屏-->
+    <div class="main_first">
+        <div class="content">
+            <div class="titles">
+                <h1>简单点PMS能帮您做什么<em></em></h1>
+                <h2><font>What</font> can we do for you</h2>
+            </div>
+        </div>
+        <div class="ling_hang  color_1" style="margin-top:50px">
+            <div class="center_fc">
+                <div class="left_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_one.png" /></div>
+                <div class="left_fr">
+                    <h1>功能完备  全面管理酒店</h1>
+                    <p>&bull;&nbsp;融合多个功能模块，一站式解决酒店管理、营销、运营问题</p>
+                    <p>&bull;&nbsp;支持天房、午夜房、长租房、会员等多种价格收取模式</p>
+                    <p>&bull;&nbsp;全面兼容客房门锁、身份证读取等设备，一键操作大大节省开房、结账时间</p>
+                </div>
+            </div>
+        </div>
+        <div class="ling_hang">
+            <div class="center_fc">
+                <div class="right_fr">
+                    <h1>简单快捷  360度全天候服务</h1>
+                    <p>&bull;&nbsp;操作流程简单，轻松上手0培训费</p>
+                    <p>&bull;&nbsp;10秒钟客人入住或结账一步到位</p>
+                    <p>&bull;&nbsp;全程提供客服技术支持，360度免费支招</p>
+                </div>
+                <div class="right_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_two.png" /></div>
+            </div>
+        </div>
+        <div class="ling_hang  color_2">
+            <div class="center_fc">
+                <div class="left_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_three.png" /></div>
+                <div class="left_fr">
+                    <h1>自动生成完备报表  多维度数据挖掘</h1>
+                    <p>&bull;&nbsp;完备的报表和数据分析功能</p>
+                    <p>&bull;&nbsp;每日报表自动生成，全面了解酒店经营状况</p>
+                    <p>&bull;&nbsp;透过报表深度整合数据，指导酒店经营管理</p>
+                </div>
+            </div>
+        </div>
+        <!--<div class="ling_hang">-->
+            <!--<div class="center_fc">-->
+                <!--<div class="right_fr">-->
+                    <!--<h1>接入携程  多营销渠道提升入住率</h1>-->
+                    <!--<p>&bull;&nbsp;对接携程、去哪儿、美团等知名平台，网络订单源源不断</p>-->
+                    <!--<p>&bull;&nbsp;借助各大平台提升曝光度，免费推广酒店品牌</p>-->
+                <!--</div>-->
+                <!--<div class="right_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_four.png" /></div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="ling_hang  color_3">-->
+            <!--<div class="center_fc">-->
+                <!--<div class="left_fl"><img  class="lazy" src="images/grey.gif" data-original="images/login/icon_five.png" /></div>-->
+                <!--<div class="left_fr">-->
+                    <!--<h1>微信扫码支付  交易迅速又省钱</h1>-->
+                    <!--<p>&bull;&nbsp;手机一扫即可支付，实现无钱包入住</p>-->
+                    <!--<p>&bull;&nbsp;无需找零，提升前台效率，降低人工成本</p>-->
+                    <!--<p>&bull;&nbsp;交易费低至0.6%，比POS刷卡更省钱</p>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="ling_hang">-->
+            <!--<div class="center_fc">-->
+                <!--<div class="right_fr">-->
+                    <!--<h1>手机远程监控  随时随地掌握房态</h1>-->
+                    <!--<p>&bull;&nbsp;手机绑定安全可靠</p>-->
+                    <!--<p>&bull;&nbsp;微信实时查询，酒店经营报表一目了然</p>-->
+                    <!--<p>&bull;&nbsp;移动端与PC端数据实时同步，BOSS走到哪管到哪</p>-->
+                <!--</div>-->
+                <!--<div class="right_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_six.png" /></div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="ling_hang  color_2">-->
+            <!--<div class="center_fc">-->
+                <!--<div class="left_fl"><img  class="lazy" src="images/grey.gif" data-original="images/login/icon_seven.png" /></div>-->
+                <!--<div class="left_fr">-->
+                    <!--<h1>支持微信订房  酒店直销更轻松</h1>-->
+                    <!--<p>&bull;&nbsp;可定制微信订房服务，开拓酒店直销渠道</p>-->
+                    <!--<p>&bull;&nbsp;打开微信就订房，便捷、个性化的客户体验</p>-->
+                    <!--<p>&bull;&nbsp;有效维系客户，实现酒店精准营销</p>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="ling_hang  color_1">
+            <div class="center_fc">
+                <div class="right_fr">
+                    <h1>云服务器，保障数据安全 </h1>
+                    <p>&bull;&nbsp;SOA架构云计算酒店管理系统</p>
+                    <p>&bull;&nbsp;数据部署在领先的“阿里云”服务器</p>
+                    <p>&bull;&nbsp;全面保障酒店管理系统运行稳定、数据安全</p>
+                </div>
+                <div class="right_fl"><img class="lazy" src="images/grey.gif" data-original="images/login/icon_eight.png" /></div>
+            </div>
+        </div>
+        <div class="ling_hang" style="height:170px"><a href="/basicinfo/Registered.html"><img class="lazy" src="images/grey.gif" data-original="images/login/butn.png" /></a></div>
+
+    </div>
+
+
+
+    <!--第二屏-->
+    <div class="main_second">
+        <div class="titles">
+            <h1>主要功能模块<em></em></h1>
+            <h2><font>Function</font> introduction</h2>
+        </div>
+        <div class="content">
+            <ul><li class="top lefts"><a class="l1" href="/basicinfo/product.html?id=1#qtgl" target="_blank"><p>前台管理</p></a><em>&nbsp;</em></li>
+                <li class="top"><a class="l2" href="/basicinfo/product.html?id=2#ddgl" target="_blank"><p>订单管理</p></a></li>
+                <li class="top"><a class="l3" href="/basicinfo/product.html?id=3#xydw" target="_blank"><p>协议单位管理</p></a></li>
+                <li class="top"><a class="l4" href="/basicinfo/product.html?id=4#hygl" target="_blank"><p>会员管理</p></a></li>
+                <li class="top nos rights"><a class="l5" href="/basicinfo/product.html?id=5#tjbb" target="_blank"><p>统计报表</p></a><em>&nbsp;</em></li>
+                <li class="bottom lefts" style="clear:both"><a class="l6" href="/basicinfo/product.html?id=6#wkt" target="_blank"><p>网客通</p></a></li>
+                <li class="bottom"><a class="l7" href="/basicinfo/product.html?id=7#kcgl" target="_blank"><p>库存管理</p></a></li>
+                <li class="bottom"><a class="l8" href="/basicinfo/product.html?id=9#dxpt" target="_blank"><p>短信平台</p></a></li>
+                <li class="bottom"><a class="l9" href="/basicinfo/product.html?id=10#wxyd" target="_blank"><p>微信、移动端</p></a></li>
+                <li class="rights"><a class="l10" href="/basicinfo/product.html?id=11#tsxgn" target="_blank"><p>特色小功能</p></a></li></ul>
+        </div>
+    </div>
+
+
+    <!--第三屏-->
+    <div class="main_third">
+        <div class="titles">
+            <h1>微信远程查询<em></em></h1>
+            <h2><font>Remote</font> query</h2>
+        </div>
+        <div class="content">
+            <div class="anitam">
+                <img class="lazy" src="images/grey.gif" data-original="images/login/tel.png" />
+                <h1>简单点酒店管理系统<strong>"微管家"</strong><br />随时随地<strong>微信远程查房态、看报表</strong></h1>
+                <p>实时查询酒店经营状况，经营报表、房态图、财务报表等应有尽有，<br />一部手机打天下，即使身在世界，也能运筹帷幄！</p>
+                <span>&nbsp;</span>
+                <font>扫一扫，立即关注</font>
+                <div class="line line_1"><em>&nbsp;</em></div>
+                <div class="line line_2"><em>&nbsp;</em></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--第四屏-->
+    <div class="main_four">
+        <div class="content">
+            <div class="titles">
+                <h1>简单点智能房价牌<em></em></h1>
+                <h2><font>Digital</font> Ad  Board</h2>
+            </div>
+            <div class="tagprice_main">
+                <img class="lazy" src="images/grey.gif" data-original="images/login/tagprice_5.jpg" alt=""/>
+                <ul><li>外观时尚大气，全面展示酒店信息</li>
+                    <li>实时房价更新，一键同步更智能</li>
+                    <li>多维度互动，升温酒店服务</li>
+                    <li>广告投放创收，提高酒店附加值</li>
+                </ul>
+                <a href="/basicinfo/price_tag.html" target="_blank">了解更多详情 ></a>
+            </div>
+        </div>
+    </div>
+    <!--新闻资讯-->
+    <div class="main_four" style="display: none">
+        <div class="content">
+            <div class="titles">
+                <h1>资讯中心<em></em></h1>
+                <h2><font>Information</font> Center</h2>
+            </div>
+            <!--<iframe src="news_information.html" style="width:100%; height:340px; border:0px; overflow:hidden"  scrolling="no" frameborder="0"></iframe>-->
+            <div class="news_infor_01">
+                <div class="news_con_02">
+                    <h1>酒店营销<a href="../BasicInfo/NewsList/NewsList_0_1.html"" target="_blank">更多>></a></h1>
+                    <div class="news_img">
+                        <a href="../BasicInfo/NewsDetails/NewsDetails_82.html" target="_blank"><img src="http://jddmis.jdd365.cn/BsPms/content/temp/636167912250560657.jpg" alt="" /></a>
+                        <p style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_82.html" target="_blank" title="成本控制是业主跟酒店总经理容易头疼的事情，控制过度容易导致员工离职，控制不够，又容易减少酒店利润，今日分享11个酒店不同时期需注意的隐形成本，掌握如何把控酒店成本。">酒店控制成本 从11项隐形成本入手 </a></p>
+                    </div>
+                    <ul><li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_78.html" target="_blank" title="新疆地区特殊的市场经济环境及信息的闭塞，导致酒店信息化、智能化程度不高。佳驰软件此次新疆之行，让新疆的酒店业者如沐春风，获取了大量的酒店信息化管理之策。">佳驰软件大数据分享会新疆站圆满结束</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_72.html" target="_blank" title="酒店筹备是酒店经营的关键，是品牌建设的起跑线，酒店筹备的好坏，直接影响酒店后期的经营管理，关系市场对酒店的品牌认同度，“好的开始是成功的一半”，这句话对于酒店筹备而言，就显得尤为重要。">酒店经营问题多　筹备设计10大要点</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_62.html" target="_blank" title="虽然OTA的确有助于引进业务，但是天价的佣金率使得这个收入渠道并不灵活。与其将每笔预定费的30%佣金交给OTA，酒店人还不如努力增加直接预定渠道的订单，这是保证网上预订稳定安全最有价值、最有利可图的方法。">手把手教您提升酒店营销的投资回报率</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_61.html" target="_blank" title="服务使顾客始终保持一种全新的感觉，这是酒店吸引顾客的重要因素。客房用品的每天更换，鲜花的更新，食品、原料的新鲜，处处保持顾客对酒店有新鲜感。">客人最想要的酒店管理十大服务全知道</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_59.html" target="_blank" title="一直以来，由于利润空间受挤压，酒店与分销商的矛盾一直层出不穷。尽管部分酒店有能力独立运营直销产品，但大量的单体酒店却缺乏互联网直销能力。">酒店直销平台抱团取暖 能否对抗OTA</a></li></ul>
+                </div>
+                <div class="news_con_02">
+                    <h1>行业动态<a href="../BasicInfo/NewsList/NewsList_0_2.html" target="_blank">更多>></a></h1>
+                    <div class="news_img">
+                        <a href="../BasicInfo/NewsDetails/NewsDetails_83.html" target="_blank"><img src="http://jddmis.jdd365.cn/BsPms/content/temp/636167923584509065.png" alt="" /></a>
+                        <p style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_83.html" target="_blank" title="这一年，相互之间的纠纷一来二去，此消彼长。今天，我们就来看一看，这不算太平的一年里，加盟商和酒店品牌出现过哪些令人印象深刻的矛盾吧。">2016经济型酒店与加盟商的那些纠纷</a></p>
+                    </div>
+                    <ul><li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_81.html" target="_blank" title="住宿市场百花齐放，酒店到底要如何规避垮台风险?这就需要酒店全方位实现标准化管理，全局控制多渠道营销，一手掌控酒店运营成本。">把控酒店资金流向 规避资金链风险</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_79.html" target="_blank" title="佳驰软件将于12月12日—14日亮相广州酒店用品展（3.2馆009号），携带腾云酒店管理系统、简单点PMS和佳驰酒店自助系统与酒店业主零距离接触，洽谈合作。">邀您参观第23届广州酒店用品展佳驰区</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_77.html" target="_blank" title="消费群体的观念已经发生改变，消费者不再是任人摆弄的“提线木偶”，以游客的设想和要求去设计行程，游客更多地参与旅游产品设计生产，拥有决定订制最符合自己需求的更多的权力势必成为旅游业的主流。归根结底，还是旅游服务配套没有跟上游客的思维。">盈利新引擎 深度数据抢占深度游市场</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_75.html" target="_blank" title="简单点酒店管理系统除了满足价税分离、全过程的进项税管控要求和发票管理外，更以简单点智慧酒店、简单点智能房价牌等软硬件产品体系为后盾，提供了一系列的信息化工具来支撑企业快速适应营改增。">如何利用酒店管理系统应对“营改增"?</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_73.html" target="_blank" title="如今的酒店生态圈，已不再是某一个酒店的单打独斗，而是基于一定背后逻辑和利益相关的资源整合企业群，在这个大平台上，酒店产业链中的所有要素有序组合、整体运营、和谐相系、生生不息。">佳驰软件重塑酒店业的全连接生态布局</a></li></ul>
+                </div>
+                <div class="news_con_02">
+                    <h1>产品资讯<a href="../BasicInfo/NewsList/NewsList_0_3.html" target="_blank">更多>></a></h1>
+                    <div class="news_img">
+                        <a href="../BasicInfo/NewsDetails/NewsDetails_80.html" target="_blank"><img src="http://jddmis.jdd365.cn/BsPms/content/temp/636167886016496293.png" alt="" /></a>
+                        <p style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_80.html" target="_blank" title="玉德商务宾馆开启支付宝和微信的“当面付”，旨在通过支付方式的升级，创新酒店入住体验。前台结账时选择支付宝或微信“闪付”，客人只需打开支付宝或微信，前台用扫码枪一扫，“嘀”的一声，最快2秒内完成收款。整个支付流程非常顺畅，不仅响应速度快，而且规避了收现、找零、刷卡的风险。">真实案例揭秘：提高入住率的关键是什么</a></p>
+                    </div>
+                    <ul><li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_76.html" target="_blank" title="佳驰软件为中小酒店提供最全面的酒店信息化解决方案，多年来致力于不断优化酒店管理平台，从酒店管理系统着手，抓住酒店在客户服务中的痛点，全方位的解决酒店的运营难题。">上线“营改增” 简单点助酒店开源节流</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_74.html" target="_blank" title="简单点酒店管理系统，为酒店铺设了高效的销售渠道，多OTA分销助阵卖房，以酒店收益管理为核心，新增酒店慧评增值服务，为酒店增效创收。">发酵渠道叠加效应  酒店盈利爆发增长</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_67.html" target="_blank" title="酒店已经迎来了微信营销的爆发期，不管是前期客源开拓还是后期的客户维护，简单点微酒店为酒店掌控自己的用户和渠道提供了技术支持和整体运营思路，在节约了酒店维护客户成本的同时，实实在在地为酒店直销实现了价值。">微信订房拓客 玩转酒店“微信营销”</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_60.html" target="_blank" title="提升用户体验、提高工作效率、降低运营成本，简单点酒店管理系统智能化再出新招，直连去呼呼智能门锁，体验一键炫酷开门。">一键炫酷开门 简单点PMS帮你做到</a></li>
+                        <li style="display:"><a href="../BasicInfo/NewsDetails/NewsDetails_58.html" target="_blank" title="简单点酒店管理系统和腾云酒店管理系统已经成功对接支付宝当面付和微信闪付，无缝对接酒店线上支付，开辟酒店顾客一秒闪住的支付新模式。">开通当面闪付送扫码枪 一键闪电收款</a></li></ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--第五屏-->
+    <div class="main_four">
+        <div class="content">
+            <div class="titles">
+                <h1>用户心声<em></em></h1>
+                <h2><font>Voice</font> of the  user</h2>
+            </div>
+            <div class="parabolic">
+                <div class="f1 hotel_number">
+                    <img class="lazy" src="images/grey.gif" data-original="images/login/people-1.png" alt=""/>
+                    <p>酒店前台王小姐</p>
+                    <em><font>都</font>以为酒店前台工作很简单，其实不然，同时操作几个管理后台让我有些力不从心，幸好遇到了一个好上司，上线了简单点酒店管理系统，不仅操作简单易学，界面清晰、操作流畅，十秒钟就能完成订房或结账，而且再也不用在多个e-booking后台之间频繁切换，订单就能自动录入，现在，工作越来越得心应手了！</em>
+                </div>
+                <div class="f2 selects hotel_number">
+                    <img class="lazy" src="images/grey.gif" data-original="images/login/people-2.png" alt=""/>
+                    <p>酒店经理李先生</p>
+                    <em><font>每</font>次开会，BOSS针对入住率问题对我各种施压，争取不到新客户，沉淀也十分吃力，实现增收困难重重。直到在朋友的推荐下，使用了简单点酒店管理系统，直连了携程等OTA平台，网络订单增多了；现在还能使用微信订房、微信支付，酒店直销渠道也打开了，通过微信平台，还能更好的维护客户关系，酒店的入住率自然得到了保障。</em>
+                </div>
+                <div class="f3 hotel_number">
+                    <img class="lazy" src="images/grey.gif" data-original="images/login/people-3.png" alt=""/>
+                    <p>酒店经营者刘先生</p>
+                    <em><font>酒</font>店经营的每一环都必须经过周密部署，尤其现在酒店之间的竞争越来越激烈，你就必须运筹帷幄把握全局。以前同时经营好几个项目，常常让我分身乏术，自从安装了简单点酒店管理系统，即使经常出差我也能通过微信随时掌握酒店经营报表，刷个朋友圈的功夫就可轻松搞定几处酒店，现在花的时间少了、效率高了，酒店收益更是蒸蒸日上。</em>
+                </div>
+            </div>
+        </div>
+        <div class="last"><a href="/basicinfo/Registered.html">&nbsp;</a></div>
+    </div>
+
+
+    <!--底部-->
+    <div class="footer">
+        <ul><li class="fl">
+            <div class="titles">友情链接</div><a style="width:100%; margin:0px; padding:0px; height:1px">&nbsp;</a>
+            <a href="http://www.flyhight.com/" target="_blank">佳驰官网</a>
+            <a href="http://yys.jdd365.cn/" target="_blank">网客通</a>
+            <a href="http://www.jdd365.cn/basicinfo/help.html" target="_blank">酒店管理系统</a>
+            <a href="http://www.jdd365.cn/basicinfo/product.html" target="_blank">酒店管理软件</a>
+            <a href="http://g.jdd365.cn" target="_blank">连锁酒店软件</a>
+            <a href="http://www.jdd365.cn/basicinfo/product.html?id=1#qtgl" target="_blank">宾馆管理系统</a>
+            <a href="http://www.jdd365.cn/basicinfo/about.html" target="_blank">酒店pms</a>
+            <a href="http://www.jdd365.cn/basicinfo/product.html?id=10#wxyd" target="_blank">微信订房</a>
+        </li>
+            <li class="fr">
+                <div class="titles">关注我们</div>
+                <div class="sweep">
+                    <img class="lazy" src="images/grey.gif" data-original="images/login/weix.png" />
+                    <img class="lazy" src="images/grey.gif" data-original="images/login/weix1.png" />
+                    <span>微信公众号</span><span style="margin:0px 0px 0px 30px">官方微博</span>
+                </div>
+            </li>
+            <li class="center">
+                <em></em>
+                <div class="address">
+                    <div style="width:500px; float:left"><div class="titles">联系我们</div></div>
+                    <span>地址：浙江省杭州市滨江区长河路475号和瑞科技园S1幢12层</span>
+                    <span>客服热线：400-xxx-xxxx</span>
+                    <span>E-Mail: kefu@hzih.net</span>
+               <span><a target="_blank" id="IEServiceLink" href=http://wpa.qq.com/msgrd?V=3&uin=1531910069&Site=简单点&Menu=yes"><img src="images/login/qq1.png"/></a>
+                     <a href="http://shang.qq.com/wpa/qunwpa?idkey=78bdfc85bca2a028834648a74e45f02fd43878cf783d01f8a5a834c5aad601b2" target="_blank"><img src="images/login/qq2.png" /></a></span>
+                </div>
+            </li>
+        </ul>
+        <p>杭州创谐信息技术股份有限公司 © 浙ICP备******号-*</p>
+    </div>
+
+
+     <!--遮罩层-->
+    <!--<div id="fixed" style="position:fixed; bottom:0px; left:0px; width:100%; height:110px; text-align:center; z-index:1000">-->
+        <!--<div style="background:#000;filter:alpha(opacity=80);-moz-opacity:0.8;opacity:0.8; width:100%; height:100%; position:absolute; left:0px; bottom:0px"></div>-->
+        <!--<div style=" width:1100px; height:110px; position:absolute; left:50%; margin-left:-550px; bottom:0px;top:0px">-->
+            <!--<a href="http://www.jdd365.cn/basicinfo/face_to_face.html" target="_blank" style="width:1100px; height:110px; background:url(images/login/fixed_1.png) center no-repeat; display:block"></a>-->
+            <!--<a href="javascript:void(0);" id="fixed_closed" style="background:url(images/login/fixed_2.png) no-repeat; display:block; width:21px; height:21px; position:absolute; right:-20px; top:10px; font-size:36px; color:#fff">&nbsp;</a>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<script type="text/javascript">-->
+        <!--$(document).ready(function () {-->
+            <!--$("#fixed_closed").click(function () {-->
+                <!--$("#fixed").slideUp();-->
+            <!--})-->
+        <!--})-->
+    <!--</script>-->
+    <script type="text/javascript" src="js/lazyload-min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(function () {
+            $("img.lazy").lazyload();
+        });
+    </script>
+
+</body>
+</html>

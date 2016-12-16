@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet">
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/smsplat/ddaccordion.js"></script>
+    <script type="text/javascript" src="../../js/public/Base.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/keycode.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/ABC.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/mess_send.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/IllegalChar.js"></script>
+    <link href="../../js/jquery/jquery.datetimepicker.css" rel="stylesheet">
+    <script type="text/javascript" src="../../js/jquery/jquery.datetimepicker.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            try {
+                $('#StartDate').datetimepicker({
+                    lang: 'ch',
+                    format: 'Y-m-d H:i',
+                    timepicker: true,
+                    defaultSelect: false,
+                    //  maxDate: '+1969/12/31 23:59',
+                    onSelectDate: function (current_time, $input) {
+                    }
+                });
+                $('#EndDate').datetimepicker({
+                    lang: 'ch',
+                    format: 'Y-m-d H:i',
+                    timepicker: true,
+                    defaultSelect: false,
+                    // maxDate: '+1969/12/31 23:59'
+                });
+            }
+            catch (e) {
+            }
+        });
+
+    </script>
+    <style type="text/css">
+        .message_infor li div input.input_query {
+            width: 105px;
+        }
+
+        .message_infor li div select.infor_select {
+            width: auto;
+            float: left;
+            height: 28px;
+            margin-right: 20px;
+        }
+
+        .message_infor li div label.label_center {
+            width: 20px;
+            text-align: center;
+        }
+
+        .message_infor li div.div_box {
+            width: 86%;
+            margin-left: 10%;
+            border: 1px solid #ccc;
+            height: 200px;
+        }
+
+        .message_infor li div input.button_query {
+            width: 80px;
+            height: 28px;
+            margin-left: 20px;
+        }
+
+        .message_infor li div.div_box div.title {
+            margin-top: 10px;
+            height: 30px;
+            width: 100%;
+        }
+
+        .message_infor li div.div_box div.body {
+            width: 90%;
+            height: 140px;
+            overflow-y: auto;
+            margin-left: 5%;
+            margin-top: 10px;
+        }
+
+        #customerTable input {
+            width: 16px;
+            height: 16px
+        }
+
+        #customerTable th, #customerTable td {
+            text-align: center
+        }
+
+        #btnQueryOrder {
+            background: #00ADEF;
+            color: #fff;
+            border: 1px solid #0789BE;
+            border-radius: 3px
+        }
+    </style>
+</head>
+<body>
+<!--酒店信息-->
+<div class="message_in">
+    <h1 class="message_infor">发信息</h1>
+    <ul class="message_infor">
+        <li>
+            <div class="div_box">
+                <div class="title">
+                    <label>联系人类型：</label>
+                    <select class="infor_select" id="QueryType">
+                        <option value="0" selected="selected">预定客人</option>
+                        <option value="1">在住客人</option>
+                        <option value="2">离店客人</option>
+                    </select>
+                    <input class="input_query" id="PhoneOrName" placeholder="姓名/ 手机号" type="text">
+                    <label style="width: 60px; padding-left:20px" id="QueryDate">来店时间：</label>
+                    <input class="input_query" runat="server" id="StartDate" value="2016-12-07 13:24" type="text"><label
+                        class="label_center">-</label>
+                    <input class="input_query" runat="server" id="EndDate" value="2016-12-14 13:24" type="text">
+                    <input class="button_query" id="btnQueryOrder" value="查询" type="button">
+                </div>
+                <div class="body">
+                    <table id="customerTable">
+                        <thead>
+                        <tr>
+                            <th><input id="checkAll" type="checkbox"></th>
+                            <th>姓名</th>
+                            <th>联系方式</th>
+                            <th>预定时间</th>
+                            <th>来店时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input class="trcheck" data-id="13845678542" type="checkbox"></td>
+                            <td>王五</td>
+                            <td>13845678542</td>
+                            <td>2016-12-07 03:02:42</td>
+                            <td>2016-12-08 12:00:00</td>
+                        </tr>
+                        <tr>
+                            <td><input class="trcheck" data-id="13588888888" type="checkbox"></td>
+                            <td>赵四</td>
+                            <td>13588888888</td>
+                            <td>2016-12-12 02:53:41</td>
+                            <td>2016-12-13 12:00:00</td>
+                        </tr>
+                        <tr>
+                            <td><input class="trcheck" data-id="13588888888" type="checkbox"></td>
+                            <td>赵四</td>
+                            <td>13588888888</td>
+                            <td>2016-12-13 01:18:32</td>
+                            <td>2016-12-14 12:00:00</td>
+                        </tr>
+                        <tr>
+                            <td><input class="trcheck" data-id="13588787646" type="checkbox"></td>
+                            <td>王四</td>
+                            <td>13588787646</td>
+                            <td>2016-12-13 02:22:39</td>
+                            <td>2016-12-14 12:00:00</td>
+                        </tr>
+                        <tr>
+                            <td><input class="trcheck" data-id="13874569874" type="checkbox"></td>
+                            <td>王六</td>
+                            <td>13874569874</td>
+                            <td>2016-12-13 05:03:20</td>
+                            <td>2016-12-14 12:00:00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </li>
+        <li for="">
+            <label><b>接收人：</b></label>
+            <!--<input type="text" id="txtContactName" />-->
+            <div id="inputs" class="inputs"></div>
+        </li>
+        <li>
+            <label><b>内容：</b></label>
+            <textarea id="Discription" maxlength="280"></textarea>
+        </li>
+        <li style="margin-top:0px;color:#1e5494"><label>&nbsp;</label>
+            <p>短信内容中如果包含折扣等类似字眼，会影响发送速度，请斟酌使用。<span style="color:red">（短信审核时间为早上8点到晚上7点，约为半个小时）</span></p></li>
+        <li style="margin-top:0px;color:#1e5494">
+            <label>&nbsp;</label>
+            <p>短信内容字数请控制在<b id="Length">64</b>个字内，超过字数将做多条信息发送。<span
+                    style="color:red">(*严禁群发违法短信和骚扰短信,否则,后果自负*)</span><span style="float:right; margin-right:65px;">已输入 <b
+                    id="charnum" style="color:#F00">0</b> 字符</span></p>
+        </li>
+        <li>
+            <label>&nbsp;</label>
+            <input value="发 送" class="bus_add" id="btnSure" type="button">
+            <input value="存草稿" class="bus_add" id="btnCancel" type="button">
+        </li>
+    </ul>
+
+    <div class="message_people">
+        <h1>&nbsp;&nbsp;联系人</h1>
+        <span><input id="ser_txt" placeholder="卡号/手机号/姓名" type="text"></span>
+        <div id="link_man_list" class="ov_hidden">
+            <div class="mess_type">
+                <div class="mess_type_titles" headerindex="0h"><input name="会员卡" class="cardcategory" type="checkbox">会员卡<span
+                        onclick="openul('会员卡')"><img class="imgmp" id="i_会员卡" src="../../images/minus.gif"></span></div>
+                <ul id="ul_会员卡" style="display:block" class="mess_people" contentindex="0c">
+                    <li><p><input name="会员卡" class="ches" type="checkbox"><b>1111</b></p>
+                        <p><em>13588888888</em> <em>赵四</em></p></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<!--end-->
+
+
+<div class="xdsoft_datetimepicker xdsoft_noselect ">
+    <div class="xdsoft_datepicker active">
+        <div class="xdsoft_mounthpicker">
+            <button type="button" class="xdsoft_prev"></button>
+            <button type="button" class="xdsoft_today_button" style="visibility: visible;"></button>
+            <div class="xdsoft_label xdsoft_month"><span>十二月</span>
+                <div class="xdsoft_select xdsoft_monthselect xdsoft_scroller_box">
+                    <div style="margin-top: 0px;">
+                        <div class="xdsoft_option " data-value="0">一月</div>
+                        <div class="xdsoft_option " data-value="1">二月</div>
+                        <div class="xdsoft_option " data-value="2">三月</div>
+                        <div class="xdsoft_option " data-value="3">四月</div>
+                        <div class="xdsoft_option " data-value="4">五月</div>
+                        <div class="xdsoft_option " data-value="5">六月</div>
+                        <div class="xdsoft_option " data-value="6">七月</div>
+                        <div class="xdsoft_option " data-value="7">八月</div>
+                        <div class="xdsoft_option " data-value="8">九月</div>
+                        <div class="xdsoft_option " data-value="9">十月</div>
+                        <div class="xdsoft_option " data-value="10">十一月</div>
+                        <div class="xdsoft_option xdsoft_current" data-value="11">十二月</div>
+                    </div>
+                    <div class="xdsoft_scrollbar">
+                        <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="xdsoft_label xdsoft_year"><span>2016</span>
+                <div class="xdsoft_select xdsoft_yearselect xdsoft_scroller_box">
+                    <div style="margin-top: 0px;">
+                        <div class="xdsoft_option " data-value="1950">1950</div>
+                        <div class="xdsoft_option " data-value="1951">1951</div>
+                        <div class="xdsoft_option " data-value="1952">1952</div>
+                        <div class="xdsoft_option " data-value="1953">1953</div>
+                        <div class="xdsoft_option " data-value="1954">1954</div>
+                        <div class="xdsoft_option " data-value="1955">1955</div>
+                        <div class="xdsoft_option " data-value="1956">1956</div>
+                        <div class="xdsoft_option " data-value="1957">1957</div>
+                        <div class="xdsoft_option " data-value="1958">1958</div>
+                        <div class="xdsoft_option " data-value="1959">1959</div>
+                        <div class="xdsoft_option " data-value="1960">1960</div>
+                        <div class="xdsoft_option " data-value="1961">1961</div>
+                        <div class="xdsoft_option " data-value="1962">1962</div>
+                        <div class="xdsoft_option " data-value="1963">1963</div>
+                        <div class="xdsoft_option " data-value="1964">1964</div>
+                        <div class="xdsoft_option " data-value="1965">1965</div>
+                        <div class="xdsoft_option " data-value="1966">1966</div>
+                        <div class="xdsoft_option " data-value="1967">1967</div>
+                        <div class="xdsoft_option " data-value="1968">1968</div>
+                        <div class="xdsoft_option " data-value="1969">1969</div>
+                        <div class="xdsoft_option " data-value="1970">1970</div>
+                        <div class="xdsoft_option " data-value="1971">1971</div>
+                        <div class="xdsoft_option " data-value="1972">1972</div>
+                        <div class="xdsoft_option " data-value="1973">1973</div>
+                        <div class="xdsoft_option " data-value="1974">1974</div>
+                        <div class="xdsoft_option " data-value="1975">1975</div>
+                        <div class="xdsoft_option " data-value="1976">1976</div>
+                        <div class="xdsoft_option " data-value="1977">1977</div>
+                        <div class="xdsoft_option " data-value="1978">1978</div>
+                        <div class="xdsoft_option " data-value="1979">1979</div>
+                        <div class="xdsoft_option " data-value="1980">1980</div>
+                        <div class="xdsoft_option " data-value="1981">1981</div>
+                        <div class="xdsoft_option " data-value="1982">1982</div>
+                        <div class="xdsoft_option " data-value="1983">1983</div>
+                        <div class="xdsoft_option " data-value="1984">1984</div>
+                        <div class="xdsoft_option " data-value="1985">1985</div>
+                        <div class="xdsoft_option " data-value="1986">1986</div>
+                        <div class="xdsoft_option " data-value="1987">1987</div>
+                        <div class="xdsoft_option " data-value="1988">1988</div>
+                        <div class="xdsoft_option " data-value="1989">1989</div>
+                        <div class="xdsoft_option " data-value="1990">1990</div>
+                        <div class="xdsoft_option " data-value="1991">1991</div>
+                        <div class="xdsoft_option " data-value="1992">1992</div>
+                        <div class="xdsoft_option " data-value="1993">1993</div>
+                        <div class="xdsoft_option " data-value="1994">1994</div>
+                        <div class="xdsoft_option " data-value="1995">1995</div>
+                        <div class="xdsoft_option " data-value="1996">1996</div>
+                        <div class="xdsoft_option " data-value="1997">1997</div>
+                        <div class="xdsoft_option " data-value="1998">1998</div>
+                        <div class="xdsoft_option " data-value="1999">1999</div>
+                        <div class="xdsoft_option " data-value="2000">2000</div>
+                        <div class="xdsoft_option " data-value="2001">2001</div>
+                        <div class="xdsoft_option " data-value="2002">2002</div>
+                        <div class="xdsoft_option " data-value="2003">2003</div>
+                        <div class="xdsoft_option " data-value="2004">2004</div>
+                        <div class="xdsoft_option " data-value="2005">2005</div>
+                        <div class="xdsoft_option " data-value="2006">2006</div>
+                        <div class="xdsoft_option " data-value="2007">2007</div>
+                        <div class="xdsoft_option " data-value="2008">2008</div>
+                        <div class="xdsoft_option " data-value="2009">2009</div>
+                        <div class="xdsoft_option " data-value="2010">2010</div>
+                        <div class="xdsoft_option " data-value="2011">2011</div>
+                        <div class="xdsoft_option " data-value="2012">2012</div>
+                        <div class="xdsoft_option " data-value="2013">2013</div>
+                        <div class="xdsoft_option " data-value="2014">2014</div>
+                        <div class="xdsoft_option " data-value="2015">2015</div>
+                        <div class="xdsoft_option xdsoft_current" data-value="2016">2016</div>
+                        <div class="xdsoft_option " data-value="2017">2017</div>
+                        <div class="xdsoft_option " data-value="2018">2018</div>
+                        <div class="xdsoft_option " data-value="2019">2019</div>
+                        <div class="xdsoft_option " data-value="2020">2020</div>
+                        <div class="xdsoft_option " data-value="2021">2021</div>
+                        <div class="xdsoft_option " data-value="2022">2022</div>
+                        <div class="xdsoft_option " data-value="2023">2023</div>
+                        <div class="xdsoft_option " data-value="2024">2024</div>
+                        <div class="xdsoft_option " data-value="2025">2025</div>
+                        <div class="xdsoft_option " data-value="2026">2026</div>
+                        <div class="xdsoft_option " data-value="2027">2027</div>
+                        <div class="xdsoft_option " data-value="2028">2028</div>
+                        <div class="xdsoft_option " data-value="2029">2029</div>
+                        <div class="xdsoft_option " data-value="2030">2030</div>
+                        <div class="xdsoft_option " data-value="2031">2031</div>
+                        <div class="xdsoft_option " data-value="2032">2032</div>
+                        <div class="xdsoft_option " data-value="2033">2033</div>
+                        <div class="xdsoft_option " data-value="2034">2034</div>
+                        <div class="xdsoft_option " data-value="2035">2035</div>
+                        <div class="xdsoft_option " data-value="2036">2036</div>
+                        <div class="xdsoft_option " data-value="2037">2037</div>
+                        <div class="xdsoft_option " data-value="2038">2038</div>
+                        <div class="xdsoft_option " data-value="2039">2039</div>
+                        <div class="xdsoft_option " data-value="2040">2040</div>
+                        <div class="xdsoft_option " data-value="2041">2041</div>
+                        <div class="xdsoft_option " data-value="2042">2042</div>
+                        <div class="xdsoft_option " data-value="2043">2043</div>
+                        <div class="xdsoft_option " data-value="2044">2044</div>
+                        <div class="xdsoft_option " data-value="2045">2045</div>
+                        <div class="xdsoft_option " data-value="2046">2046</div>
+                        <div class="xdsoft_option " data-value="2047">2047</div>
+                        <div class="xdsoft_option " data-value="2048">2048</div>
+                        <div class="xdsoft_option " data-value="2049">2049</div>
+                        <div class="xdsoft_option " data-value="2050">2050</div>
+                    </div>
+                    <div class="xdsoft_scrollbar">
+                        <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="xdsoft_next"></button>
+        </div>
+        <div class="xdsoft_calendar">
+            <table>
+                <thead>
+                <tr>
+                    <th>日</th>
+                    <th>一</th>
+                    <th>二</th>
+                    <th>三</th>
+                    <th>四</th>
+                    <th>五</th>
+                    <th>六</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-date="27" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_other_month xdsoft_weekend">
+                        <div>27</div>
+                    </td>
+                    <td data-date="28" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date xdsoft_other_month">
+                        <div>28</div>
+                    </td>
+                    <td data-date="29" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date xdsoft_other_month">
+                        <div>29</div>
+                    </td>
+                    <td data-date="30" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date xdsoft_other_month">
+                        <div>30</div>
+                    </td>
+                    <td data-date="1" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>1</div>
+                    </td>
+                    <td data-date="2" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>2</div>
+                    </td>
+                    <td data-date="3" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>3</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="4" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>4</div>
+                    </td>
+                    <td data-date="5" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>5</div>
+                    </td>
+                    <td data-date="6" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>6</div>
+                    </td>
+                    <td data-date="7" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date xdsoft_current">
+                        <div>7</div>
+                    </td>
+                    <td data-date="8" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>8</div>
+                    </td>
+                    <td data-date="9" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>9</div>
+                    </td>
+                    <td data-date="10" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>10</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="11" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>11</div>
+                    </td>
+                    <td data-date="12" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>12</div>
+                    </td>
+                    <td data-date="13" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>13</div>
+                    </td>
+                    <td data-date="14" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date xdsoft_today">
+                        <div>14</div>
+                    </td>
+                    <td data-date="15" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>15</div>
+                    </td>
+                    <td data-date="16" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>16</div>
+                    </td>
+                    <td data-date="17" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>17</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="18" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>18</div>
+                    </td>
+                    <td data-date="19" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>19</div>
+                    </td>
+                    <td data-date="20" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>20</div>
+                    </td>
+                    <td data-date="21" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date">
+                        <div>21</div>
+                    </td>
+                    <td data-date="22" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>22</div>
+                    </td>
+                    <td data-date="23" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>23</div>
+                    </td>
+                    <td data-date="24" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>24</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="25" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>25</div>
+                    </td>
+                    <td data-date="26" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>26</div>
+                    </td>
+                    <td data-date="27" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>27</div>
+                    </td>
+                    <td data-date="28" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date">
+                        <div>28</div>
+                    </td>
+                    <td data-date="29" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>29</div>
+                    </td>
+                    <td data-date="30" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>30</div>
+                    </td>
+                    <td data-date="31" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>31</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="xdsoft_timepicker active">
+        <button type="button" class="xdsoft_prev"></button>
+        <div class="xdsoft_time_box xdsoft_scroller_box">
+            <div class="xdsoft_time_variant" style="margin-top: 0px;">
+                <div class="xdsoft_time " data-hour="0" data-minute="0">00:00</div>
+                <div class="xdsoft_time " data-hour="1" data-minute="0">01:00</div>
+                <div class="xdsoft_time " data-hour="2" data-minute="0">02:00</div>
+                <div class="xdsoft_time " data-hour="3" data-minute="0">03:00</div>
+                <div class="xdsoft_time " data-hour="4" data-minute="0">04:00</div>
+                <div class="xdsoft_time " data-hour="5" data-minute="0">05:00</div>
+                <div class="xdsoft_time " data-hour="6" data-minute="0">06:00</div>
+                <div class="xdsoft_time " data-hour="7" data-minute="0">07:00</div>
+                <div class="xdsoft_time " data-hour="8" data-minute="0">08:00</div>
+                <div class="xdsoft_time " data-hour="9" data-minute="0">09:00</div>
+                <div class="xdsoft_time " data-hour="10" data-minute="0">10:00</div>
+                <div class="xdsoft_time " data-hour="11" data-minute="0">11:00</div>
+                <div class="xdsoft_time " data-hour="12" data-minute="0">12:00</div>
+                <div class="xdsoft_time xdsoft_current" data-hour="13" data-minute="0">13:00</div>
+                <div class="xdsoft_time " data-hour="14" data-minute="0">14:00</div>
+                <div class="xdsoft_time " data-hour="15" data-minute="0">15:00</div>
+                <div class="xdsoft_time " data-hour="16" data-minute="0">16:00</div>
+                <div class="xdsoft_time " data-hour="17" data-minute="0">17:00</div>
+                <div class="xdsoft_time " data-hour="18" data-minute="0">18:00</div>
+                <div class="xdsoft_time " data-hour="19" data-minute="0">19:00</div>
+                <div class="xdsoft_time " data-hour="20" data-minute="0">20:00</div>
+                <div class="xdsoft_time " data-hour="21" data-minute="0">21:00</div>
+                <div class="xdsoft_time " data-hour="22" data-minute="0">22:00</div>
+                <div class="xdsoft_time " data-hour="23" data-minute="0">23:00</div>
+            </div>
+            <div class="xdsoft_scrollbar">
+                <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+            </div>
+        </div>
+        <button type="button" class="xdsoft_next"></button>
+    </div>
+</div>
+<div class="xdsoft_datetimepicker xdsoft_noselect ">
+    <div class="xdsoft_datepicker active">
+        <div class="xdsoft_mounthpicker">
+            <button type="button" class="xdsoft_prev"></button>
+            <button type="button" class="xdsoft_today_button" style="visibility: visible;"></button>
+            <div class="xdsoft_label xdsoft_month"><span>十二月</span>
+                <div class="xdsoft_select xdsoft_monthselect xdsoft_scroller_box">
+                    <div style="margin-top: 0px;">
+                        <div class="xdsoft_option " data-value="0">一月</div>
+                        <div class="xdsoft_option " data-value="1">二月</div>
+                        <div class="xdsoft_option " data-value="2">三月</div>
+                        <div class="xdsoft_option " data-value="3">四月</div>
+                        <div class="xdsoft_option " data-value="4">五月</div>
+                        <div class="xdsoft_option " data-value="5">六月</div>
+                        <div class="xdsoft_option " data-value="6">七月</div>
+                        <div class="xdsoft_option " data-value="7">八月</div>
+                        <div class="xdsoft_option " data-value="8">九月</div>
+                        <div class="xdsoft_option " data-value="9">十月</div>
+                        <div class="xdsoft_option " data-value="10">十一月</div>
+                        <div class="xdsoft_option xdsoft_current" data-value="11">十二月</div>
+                    </div>
+                    <div class="xdsoft_scrollbar">
+                        <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="xdsoft_label xdsoft_year"><span>2016</span>
+                <div class="xdsoft_select xdsoft_yearselect xdsoft_scroller_box">
+                    <div style="margin-top: 0px;">
+                        <div class="xdsoft_option " data-value="1950">1950</div>
+                        <div class="xdsoft_option " data-value="1951">1951</div>
+                        <div class="xdsoft_option " data-value="1952">1952</div>
+                        <div class="xdsoft_option " data-value="1953">1953</div>
+                        <div class="xdsoft_option " data-value="1954">1954</div>
+                        <div class="xdsoft_option " data-value="1955">1955</div>
+                        <div class="xdsoft_option " data-value="1956">1956</div>
+                        <div class="xdsoft_option " data-value="1957">1957</div>
+                        <div class="xdsoft_option " data-value="1958">1958</div>
+                        <div class="xdsoft_option " data-value="1959">1959</div>
+                        <div class="xdsoft_option " data-value="1960">1960</div>
+                        <div class="xdsoft_option " data-value="1961">1961</div>
+                        <div class="xdsoft_option " data-value="1962">1962</div>
+                        <div class="xdsoft_option " data-value="1963">1963</div>
+                        <div class="xdsoft_option " data-value="1964">1964</div>
+                        <div class="xdsoft_option " data-value="1965">1965</div>
+                        <div class="xdsoft_option " data-value="1966">1966</div>
+                        <div class="xdsoft_option " data-value="1967">1967</div>
+                        <div class="xdsoft_option " data-value="1968">1968</div>
+                        <div class="xdsoft_option " data-value="1969">1969</div>
+                        <div class="xdsoft_option " data-value="1970">1970</div>
+                        <div class="xdsoft_option " data-value="1971">1971</div>
+                        <div class="xdsoft_option " data-value="1972">1972</div>
+                        <div class="xdsoft_option " data-value="1973">1973</div>
+                        <div class="xdsoft_option " data-value="1974">1974</div>
+                        <div class="xdsoft_option " data-value="1975">1975</div>
+                        <div class="xdsoft_option " data-value="1976">1976</div>
+                        <div class="xdsoft_option " data-value="1977">1977</div>
+                        <div class="xdsoft_option " data-value="1978">1978</div>
+                        <div class="xdsoft_option " data-value="1979">1979</div>
+                        <div class="xdsoft_option " data-value="1980">1980</div>
+                        <div class="xdsoft_option " data-value="1981">1981</div>
+                        <div class="xdsoft_option " data-value="1982">1982</div>
+                        <div class="xdsoft_option " data-value="1983">1983</div>
+                        <div class="xdsoft_option " data-value="1984">1984</div>
+                        <div class="xdsoft_option " data-value="1985">1985</div>
+                        <div class="xdsoft_option " data-value="1986">1986</div>
+                        <div class="xdsoft_option " data-value="1987">1987</div>
+                        <div class="xdsoft_option " data-value="1988">1988</div>
+                        <div class="xdsoft_option " data-value="1989">1989</div>
+                        <div class="xdsoft_option " data-value="1990">1990</div>
+                        <div class="xdsoft_option " data-value="1991">1991</div>
+                        <div class="xdsoft_option " data-value="1992">1992</div>
+                        <div class="xdsoft_option " data-value="1993">1993</div>
+                        <div class="xdsoft_option " data-value="1994">1994</div>
+                        <div class="xdsoft_option " data-value="1995">1995</div>
+                        <div class="xdsoft_option " data-value="1996">1996</div>
+                        <div class="xdsoft_option " data-value="1997">1997</div>
+                        <div class="xdsoft_option " data-value="1998">1998</div>
+                        <div class="xdsoft_option " data-value="1999">1999</div>
+                        <div class="xdsoft_option " data-value="2000">2000</div>
+                        <div class="xdsoft_option " data-value="2001">2001</div>
+                        <div class="xdsoft_option " data-value="2002">2002</div>
+                        <div class="xdsoft_option " data-value="2003">2003</div>
+                        <div class="xdsoft_option " data-value="2004">2004</div>
+                        <div class="xdsoft_option " data-value="2005">2005</div>
+                        <div class="xdsoft_option " data-value="2006">2006</div>
+                        <div class="xdsoft_option " data-value="2007">2007</div>
+                        <div class="xdsoft_option " data-value="2008">2008</div>
+                        <div class="xdsoft_option " data-value="2009">2009</div>
+                        <div class="xdsoft_option " data-value="2010">2010</div>
+                        <div class="xdsoft_option " data-value="2011">2011</div>
+                        <div class="xdsoft_option " data-value="2012">2012</div>
+                        <div class="xdsoft_option " data-value="2013">2013</div>
+                        <div class="xdsoft_option " data-value="2014">2014</div>
+                        <div class="xdsoft_option " data-value="2015">2015</div>
+                        <div class="xdsoft_option xdsoft_current" data-value="2016">2016</div>
+                        <div class="xdsoft_option " data-value="2017">2017</div>
+                        <div class="xdsoft_option " data-value="2018">2018</div>
+                        <div class="xdsoft_option " data-value="2019">2019</div>
+                        <div class="xdsoft_option " data-value="2020">2020</div>
+                        <div class="xdsoft_option " data-value="2021">2021</div>
+                        <div class="xdsoft_option " data-value="2022">2022</div>
+                        <div class="xdsoft_option " data-value="2023">2023</div>
+                        <div class="xdsoft_option " data-value="2024">2024</div>
+                        <div class="xdsoft_option " data-value="2025">2025</div>
+                        <div class="xdsoft_option " data-value="2026">2026</div>
+                        <div class="xdsoft_option " data-value="2027">2027</div>
+                        <div class="xdsoft_option " data-value="2028">2028</div>
+                        <div class="xdsoft_option " data-value="2029">2029</div>
+                        <div class="xdsoft_option " data-value="2030">2030</div>
+                        <div class="xdsoft_option " data-value="2031">2031</div>
+                        <div class="xdsoft_option " data-value="2032">2032</div>
+                        <div class="xdsoft_option " data-value="2033">2033</div>
+                        <div class="xdsoft_option " data-value="2034">2034</div>
+                        <div class="xdsoft_option " data-value="2035">2035</div>
+                        <div class="xdsoft_option " data-value="2036">2036</div>
+                        <div class="xdsoft_option " data-value="2037">2037</div>
+                        <div class="xdsoft_option " data-value="2038">2038</div>
+                        <div class="xdsoft_option " data-value="2039">2039</div>
+                        <div class="xdsoft_option " data-value="2040">2040</div>
+                        <div class="xdsoft_option " data-value="2041">2041</div>
+                        <div class="xdsoft_option " data-value="2042">2042</div>
+                        <div class="xdsoft_option " data-value="2043">2043</div>
+                        <div class="xdsoft_option " data-value="2044">2044</div>
+                        <div class="xdsoft_option " data-value="2045">2045</div>
+                        <div class="xdsoft_option " data-value="2046">2046</div>
+                        <div class="xdsoft_option " data-value="2047">2047</div>
+                        <div class="xdsoft_option " data-value="2048">2048</div>
+                        <div class="xdsoft_option " data-value="2049">2049</div>
+                        <div class="xdsoft_option " data-value="2050">2050</div>
+                    </div>
+                    <div class="xdsoft_scrollbar">
+                        <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="xdsoft_next"></button>
+        </div>
+        <div class="xdsoft_calendar">
+            <table>
+                <thead>
+                <tr>
+                    <th>日</th>
+                    <th>一</th>
+                    <th>二</th>
+                    <th>三</th>
+                    <th>四</th>
+                    <th>五</th>
+                    <th>六</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-date="27" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_other_month xdsoft_weekend">
+                        <div>27</div>
+                    </td>
+                    <td data-date="28" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date xdsoft_other_month">
+                        <div>28</div>
+                    </td>
+                    <td data-date="29" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date xdsoft_other_month">
+                        <div>29</div>
+                    </td>
+                    <td data-date="30" data-month="10" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date xdsoft_other_month">
+                        <div>30</div>
+                    </td>
+                    <td data-date="1" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>1</div>
+                    </td>
+                    <td data-date="2" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>2</div>
+                    </td>
+                    <td data-date="3" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>3</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="4" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>4</div>
+                    </td>
+                    <td data-date="5" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>5</div>
+                    </td>
+                    <td data-date="6" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>6</div>
+                    </td>
+                    <td data-date="7" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date">
+                        <div>7</div>
+                    </td>
+                    <td data-date="8" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>8</div>
+                    </td>
+                    <td data-date="9" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>9</div>
+                    </td>
+                    <td data-date="10" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>10</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="11" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>11</div>
+                    </td>
+                    <td data-date="12" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>12</div>
+                    </td>
+                    <td data-date="13" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>13</div>
+                    </td>
+                    <td data-date="14" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date xdsoft_current xdsoft_today">
+                        <div>14</div>
+                    </td>
+                    <td data-date="15" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>15</div>
+                    </td>
+                    <td data-date="16" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>16</div>
+                    </td>
+                    <td data-date="17" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>17</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="18" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>18</div>
+                    </td>
+                    <td data-date="19" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>19</div>
+                    </td>
+                    <td data-date="20" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>20</div>
+                    </td>
+                    <td data-date="21" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date">
+                        <div>21</div>
+                    </td>
+                    <td data-date="22" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>22</div>
+                    </td>
+                    <td data-date="23" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>23</div>
+                    </td>
+                    <td data-date="24" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>24</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td data-date="25" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week0 xdsoft_date xdsoft_weekend">
+                        <div>25</div>
+                    </td>
+                    <td data-date="26" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week1 xdsoft_date">
+                        <div>26</div>
+                    </td>
+                    <td data-date="27" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week2 xdsoft_date">
+                        <div>27</div>
+                    </td>
+                    <td data-date="28" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week3 xdsoft_date">
+                        <div>28</div>
+                    </td>
+                    <td data-date="29" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week4 xdsoft_date">
+                        <div>29</div>
+                    </td>
+                    <td data-date="30" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week5 xdsoft_date">
+                        <div>30</div>
+                    </td>
+                    <td data-date="31" data-month="11" data-year="2016"
+                        class="xdsoft_date xdsoft_day_of_week6 xdsoft_date xdsoft_weekend">
+                        <div>31</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="xdsoft_timepicker active">
+        <button type="button" class="xdsoft_prev"></button>
+        <div class="xdsoft_time_box xdsoft_scroller_box">
+            <div class="xdsoft_time_variant" style="margin-top: 0px;">
+                <div class="xdsoft_time " data-hour="0" data-minute="0">00:00</div>
+                <div class="xdsoft_time " data-hour="1" data-minute="0">01:00</div>
+                <div class="xdsoft_time " data-hour="2" data-minute="0">02:00</div>
+                <div class="xdsoft_time " data-hour="3" data-minute="0">03:00</div>
+                <div class="xdsoft_time " data-hour="4" data-minute="0">04:00</div>
+                <div class="xdsoft_time " data-hour="5" data-minute="0">05:00</div>
+                <div class="xdsoft_time " data-hour="6" data-minute="0">06:00</div>
+                <div class="xdsoft_time " data-hour="7" data-minute="0">07:00</div>
+                <div class="xdsoft_time " data-hour="8" data-minute="0">08:00</div>
+                <div class="xdsoft_time " data-hour="9" data-minute="0">09:00</div>
+                <div class="xdsoft_time " data-hour="10" data-minute="0">10:00</div>
+                <div class="xdsoft_time " data-hour="11" data-minute="0">11:00</div>
+                <div class="xdsoft_time " data-hour="12" data-minute="0">12:00</div>
+                <div class="xdsoft_time xdsoft_current" data-hour="13" data-minute="0">13:00</div>
+                <div class="xdsoft_time " data-hour="14" data-minute="0">14:00</div>
+                <div class="xdsoft_time " data-hour="15" data-minute="0">15:00</div>
+                <div class="xdsoft_time " data-hour="16" data-minute="0">16:00</div>
+                <div class="xdsoft_time " data-hour="17" data-minute="0">17:00</div>
+                <div class="xdsoft_time " data-hour="18" data-minute="0">18:00</div>
+                <div class="xdsoft_time " data-hour="19" data-minute="0">19:00</div>
+                <div class="xdsoft_time " data-hour="20" data-minute="0">20:00</div>
+                <div class="xdsoft_time " data-hour="21" data-minute="0">21:00</div>
+                <div class="xdsoft_time " data-hour="22" data-minute="0">22:00</div>
+                <div class="xdsoft_time " data-hour="23" data-minute="0">23:00</div>
+            </div>
+            <div class="xdsoft_scrollbar">
+                <div class="xdsoft_scroller" style="display: block; height: 10px; margin-top: 0px;"></div>
+            </div>
+        </div>
+        <button type="button" class="xdsoft_next"></button>
+    </div>
+</div>
+</body>
+</html>

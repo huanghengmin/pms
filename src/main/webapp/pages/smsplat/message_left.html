@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet">
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="../../js/public/Base.js"></script>
+    <script type="text/javascript" src="../../js/smsplat/ddaccordion.js"></script>
+    <script src="../../js/jquery/jquery.datetimepicker.js"></script>
+    <!--<script src="../../js/smsplat/message_left.js"></script>-->
+    <script type="text/javascript">
+
+       /* function CheckLeft(obj, id) {
+            $(".left").removeClass('select_on');
+            $(".left").removeClass('select');
+            $("#minus").addClass('select_on');
+            var src = "mess_list.html?status=" + obj;
+            $(".set_lf li a").removeClass('select');
+            $("#" + id).addClass('select');
+            $.cookie('smsplatselect', src);                 //保存到Cookie;
+            window.location.href = window.location.href;
+            try {
+                parent.set_main.window.location = src;
+            } catch (e) {
+
+            }
+        }*/
+
+        /*$(function () {
+            function OpenDefaultPage() {
+                var src = "";
+                try {
+                    src = $.cookie('smsplatselect');
+                    if (src == null || src == undefined) {
+                        return;
+                    }
+                    try {
+                        parent.set_main.window.location = src;
+                    } catch (e) {
+                    }
+                    //设置为选中
+                    $(".set_lf li a").removeClass('select');
+                    var list = $(".set_lf li a");
+                    for (var i = 0; i < list.length; i++) {
+                        if ($(list[i]).attr("tag") == src) {
+                            $(list[i]).addClass("select");
+                            break;
+                        }
+                    }
+
+                    var left = $(".left");
+                    for (var i = 0; i < left.length; i++) {
+                        if ($(left[i]).attr("href") == src) {
+                            $(left[i]).addClass("select");
+                            return;
+                        }
+                    }
+                    $("#minus").addClass('select_on');
+                } catch (e) {
+                }
+            }
+
+            OpenDefaultPage();
+
+            //判断是否连锁版本
+            alert("判断是否连锁版本");
+            /!* postRequest("/Services/BasicService.aspx", null, "AccountUsl", "GetComponentType", false, function (data) {
+             if (data.State.Success) {
+             if (data.Data == "0") {//单店版
+             $("#divaccount").show();
+             }
+             else {
+             $("#divaccount").hide();
+             }
+             }
+             });*!/
+        });*/
+
+        function checkon(id) {
+            $(".set_lf li a").removeClass('select');
+            if (id == "minus") {
+                $("#a_sent").click();
+            }
+            $(".left").removeClass('select_on');
+            $("#" + id).addClass('select_on');
+
+            $(".left").removeClass('select');
+            $("#" + id).addClass('select');
+            var src = $("#" + id).attr("href");
+            $.cookie('smsplatselect', src);
+            window.location.href = window.location.href;
+        }
+    </script>
+</head>
+<body>
+<!--<div class="glossymenu fontYaHei">
+    <div class="caidan">
+        <div onclick="checkon('minus')">
+            <a class="menuitem submenuheader left" id="minus" headerindex="0h">
+                <span class="accordprefix">短信列表</span>
+                    <span class="accordsuffix">
+                        <img src="../../images/minus.gif" class="statusicon"></span>
+            </a>
+        </div>
+        <div class="submenu" contentindex="0c">
+            <ul class="set_lf" style="background: #fff; padding: 5px 0px">
+                <li class="bs">
+                    <a href="mess_list.html?status=0" id="a_draft" target="set_main" onclick="CheckLeft('0','a_draft')">草稿箱(1)</a>
+                </li>
+                <li>
+                    <a href="mess_list.html?status=1" id="a_sent" target="set_main" onclick="CheckLeft('1','a_sent')">待发送(0)</a>
+                </li>
+                <li>
+                    <a href="mess_list.html?status=2" id="a_Sendsuccess" target="set_main" onclick="CheckLeft('2','a_Sendsuccess')">发送成功(0)</a>
+                </li>
+                <li>
+                    <a href="mess_list.html?status=3" id="a_Sendfailure" target="set_main" onclick="CheckLeft('3','a_Sendfailure')">发送失败(0)</a>
+                </li>
+                <li>
+                    <a href="mess_list.html?status=4" id="a_deleted" target="set_main" onclick="CheckLeft('4','a_deleted')">回收站(0)</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>-->
+
+<!--<div class="set_lf  fontYaHei" onclick="checkon('send')">
+    <a href="mess_send.html" class="left" target="set_main" id="send">发送短信</a>
+</div>-->
+<div class="set_lf  fontYaHei left" onclick="checkon('mess_set')">
+    <a href="mess_set.html" class="left" target="set_main" id="mess_set">智能设置</a>
+</div>
+<div class="set_lf  fontYaHei left" id="divaccount" style="" onclick="checkon('mess_account')">
+    <a href="mess_account.html" class="left" target="set_main" id="mess_account">短信账户</a>
+</div>
+
+
+</body>
+</html>

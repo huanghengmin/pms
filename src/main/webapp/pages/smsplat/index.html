@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="../../js/public/Base.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+    function dyniframesize(down) {
+        var pTar = null;
+        if (document.getElementById) {
+            pTar = document.getElementById(down);
+        }
+        else {
+            eval('pTar = ' + down + ';');
+        }
+        if (pTar && !window.opera) {
+            pTar.style.display = "block"
+            pTar.height = $(document).height() - 0;
+        }
+    }
+    $(function () {
+        dyniframesize('menu_left');
+        dyniframesize('set_main');
+        $(window).resize(function () {
+            dyniframesize('menu_left');
+            dyniframesize('set_main');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    var winWidth = 0;
+    var winHeight = 0;
+    function findDimensions() //函数：获取尺寸
+    {
+        //获取窗口宽度
+        if (window.innerWidth)
+            winWidth = window.innerWidth;
+        else if ((document.body) && (document.body.clientWidth))
+            winWidth = document.body.clientWidth;
+        //获取窗口高度
+        if (window.innerHeight)
+            winHeight = window.innerHeight;
+        else if ((document.body) && (document.body.clientHeight))
+            winHeight = document.body.clientHeight;
+        //通过深入Document内部对body进行检测，获取窗口大小
+        if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth) {
+            winHeight = document.documentElement.clientHeight;
+            winWidth = document.documentElement.clientWidth;
+        }
+
+        $("#div").attr("style", "width:" + (winWidth - 138) + "px");
+
+    }
+
+    window.onload = findDimensions;
+    //调用函数，获取数值
+    window.onresize = findDimensions;
+
+    function reloadSetMain() {
+        document.set_main.location.reload();
+    }
+</script>
+
+
+<body   style="height:100%">
+    <div class="set">
+        <div class="fl" style="width: 119px;">
+            <iframe src="message_left.html" width="119" frameborder="0" id="menu_left" name="menu_left" scrolling="yes" frameborder="0" style="float: left; background: #F3F3F3; border-right: #DDD 1px solid;"></iframe>
+        </div>
+
+        <div class="fr" id="div">
+            <!--酒店信息-->
+            <!--<iframe src="mess_list.html?status=0" width="100%" frameborder="0" id="set_main" name="set_main" scrolling="yes" frameborder="0" style="float: left"></iframe>-->
+            <iframe src="mess_set.html" width="100%" frameborder="0" id="set_main" name="set_main" scrolling="yes" frameborder="0" style="float: left"></iframe>
+            <!--end-->
+
+        </div>
+    </div>
+    <div class="white_content pwin" style="cursor: pointer;">
+        <!--<div class="louceng">
+        </div>-->
+
+        <div class="close" tag="pwin">
+            <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin2('pwin');" style="cursor: pointer;">&nbsp;</a>
+        </div>
+    </div>
+    <div class="black_overlay pwin_black"></div>
+
+    <div class="white_content pwin2" style="z-index: 1004; cursor: pointer;">
+        <!--<div class="louceng">
+        </div>-->
+
+        <div class="close" tag="pwin2">
+            <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin2('pwin2');" style="cursor: pointer;">&nbsp;</a>
+        </div>
+    </div>
+    <div class="black_overlay pwin2_black" style="z-index: 1003;"></div>
+
+    <div class="white_content pwinpay" style="z-index: 1006; cursor: pointer;">
+        <!--<div class="louceng">
+        </div>-->
+
+        <div class="close" tag="pwinpay">
+            <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin2('pwinpay');reloadSetMain();" style="cursor: pointer;">&nbsp;</a>
+        </div>
+    </div>
+    <div class="black_overlay pwinpay_black" style="z-index: 1005;"></div>
+
+
+    <!--<div id="divLoading" class="black_overlay">
+        <img src="../../images/loading.gif" alt="数据加载中" style="left: 42%; top: 42%; position: absolute;" />
+    </div>-->
+</body>
+</html>

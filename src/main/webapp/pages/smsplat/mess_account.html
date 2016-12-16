@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>简单点酒店管理平台</title>
+    <link href="../../css/styles/main.css" type="text/css" rel="stylesheet">
+    <script src="../../js/jquery/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="../../js/public/Base.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       /* function checkAccountType() {
+            var data = postSynRequest("/Services/BasicService.aspx", null, "AccountUsl", "GetAccount");
+            if (data.State.Success) {
+                if (data.Data.AccountType == "1") {
+                    window.location.href = "mess_account.html";
+                }
+                else if (data.Data.AccountType == "2") {
+                    window.location.href = "subaccount.html";
+                }
+            }
+        }
+        checkAccountType();*/
+
+        function openSubAccount() {
+            if (!confirm("您是否需要立即开通短信账号！")) {
+                return false;
+            }
+            /*var data = postSynRequest("/Services/BasicService.aspx", null, "AccountUsl", "OpenSubAccount");
+            if (data.State.Success) {
+                window.location.href = "subaccount.html";
+            }*/
+        }
+
+       function openBand() {
+           if (!confirm("您是否立即绑定！")) {
+               return false;
+           }
+       }
+    </script>
+</head>
+
+<body>
+    <div class="sms_opening" >
+        <div class="opening">
+            <img src="../../images/sms.png">
+            <div class="fr">
+                <p>开通短信账号即送100条短信，<a href="###" onclick="openSubAccount();">立即开通</a></p>
+                <!--<span>已有短信账户，<a href="http://jcsmsplat.jdd365.cn/message/mess_account.html">立即绑定</a></span>-->
+                <span>已有短信账户，<a href="###" onclick="openBand();">立即绑定</a></span>
+            </div>
+        </div>
+    </div>
+
+
+</body></html>

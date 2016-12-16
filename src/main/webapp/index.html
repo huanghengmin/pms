@@ -1,0 +1,985 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="最好用的酒店管理系统|操作简单的酒店管理软件|怎么选择酒店管理系统" />
+    <meta name="description" content="酒店住宿自住服务系统-PMS" />
+    <title>酒店管理系统</title>
+    <link href="images/favicon.png" rel="png" />
+    <link href="css/styles/main.css" type="text/css" rel="stylesheet" />
+    <link href="css/styles/tch.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.signalR-2.1.2.min.js"></script>
+    <script type="text/javascript" src="js/public/Base.js"></script>
+    <script type="text/javascript" src="js/public/jquery.cookie.js"></script>
+    <script type="text/javascript" src="js/public/PmsWebSocket.js"></script>
+    <script type="text/javascript" src="js/public/PagePermission.js"></script>
+
+    <script language="javascript" type="text/javascript">
+
+    var shopId = undefined;
+    function dyniframesize(down) {
+        var pTar = null;
+        if (document.getElementById) {
+            pTar = document.getElementById(down);
+        }
+        else {
+            eval('pTar = ' + down + ';');
+        }
+        if (pTar && !window.opera) {
+            //pTar.style.display = "block"
+            pTar.height = $(document).height() - 136;
+        }
+    }
+    $(function () {
+        dyniframesize('main');
+        $(window).resize(function () { dyniframesize('main'); });
+        $("#mb_table li").each(function () {
+            var obj = this;
+            var i = parseInt($(obj).attr('data-order'));
+            switch (i) {
+                case 0:
+                    $(obj).attr('data-url', '房态图|/pms/pages/frontOp/index.html');
+                    break;
+                case 1:
+                    $(obj).attr('data-url', '客人|/pms/pages/customer/index.html');
+                    break;
+                case 2:
+                    $(obj).attr('data-url', '会员|/pms/pages/vip/index.html');
+                    break;
+                case 3:
+                    $(obj).attr('data-url', '协议单位|/pms/pages/contractUnit/index.html');
+                    break;
+                case 4:
+//                    $(obj).attr('data-url', '非住客账|/OtherFee/Index.html');
+                    break;
+                case 5:
+                    $(obj).attr('data-url', '预订|/pms/pages/book/index.html');
+                    break;
+                case 6:
+//                    $(obj).attr('data-url', '手工夜审|/Confirm/Index.html');
+                    break;
+                case 7:
+                    $(obj).attr('data-url', '报表|/pms/pages/report/index.html');
+                    break;
+                case 8:
+                    $(obj).attr('data-url', '短信|/pms/pages/smsplat/index.html');
+                    break;
+                case 9:
+//                    $(obj).attr('data-url', '库存|/stockrequest.aspx');
+                    break;
+                case 10:
+                    $(obj).attr('data-url', '设置|/pms/pages/set/index.html');
+                    break;
+                case 11:
+//                    $(obj).attr('data-url', '慧评|/huipingrequest.aspx');
+                    break;
+                case 12:
+                    $(obj).attr('data-url', '网客通');
+                    break;
+            };
+            $(obj).click(function () {
+                $("#mb_table li").each(function () {
+                    var j = parseInt($(this).attr('data-order'));
+                    if (i == j) {
+                        $(this).addClass("select");
+                    }
+                    else {
+                        $(this).removeClass("select");
+                    }
+                });
+                var tabs = $(obj).attr('data-url').toString().split(/;/g);
+                var title = "";
+                for (var k = 0; k < tabs.length; k++) {
+                    var arr = tabs[k].split('|');
+                    title = arr[0];
+                    if (title != "网客通") {
+                        openTab(arr[1], arr[0], k == 0);
+                    }
+                }
+                if (title != "") {
+//                    var res = postSynRequest("/services/basicservice.aspx", { title: title }, "SystemSet", "ModuleUseLogAdd");
+                    var res = {"Data":null,"State":{"Data":null,"Des":null,"Errkey":null,"Success":true}};
+                    if (!res.State.Success) {
+                        alert(res.State.Errkey);
+                    }
+                }
+
+                if (title == "网客通") {
+//                    var res = postSynRequest("/services/basicservice.aspx", null, "SystemSet", "TempShopOTAInit");
+                    var res = {"Data":{"TempShopOTA":{"OtaQunar":1,"OtaElong":0,"OtaMeituan":0,"OtaLy":0,
+                        "OtaTuniu":0,"OtamanGocity":0,"Otaletu":0,"Otalvmama":0,"Otaalitrip":1}},"State":{"Data":null,"Des":null,"Errkey":null,"Success":true}};
+                    if (res.State.Success) {
+                        if (res.Data.TempShopOTA != null) {
+                            if (res.Data.TempShopOTA.OtaQunar == 1) {
+                                openTab("http://ebooking.qunar.com/ebPage/login.html", "去哪儿", true);
+                            }
+                            if (res.Data.TempShopOTA.OtaElong == 1) {
+                                openTab("http://ebooking.elong.com/ebookingnew/newlogin.mvc/login", "艺龙", true);
+                            }
+                            if (res.Data.TempShopOTA.OtaMeituan == 1) {
+                                openTab("http://e.meituan.com/account/login", "美团", true);
+                            }
+                            if (res.Data.TempShopOTA.OtaLy == 1) {
+                                openTab("https://ebooking.ly.com/Home/Login?ReturnUrl=https://ebooking.ly.com/", "同程网", true);
+                            }
+                            if (res.Data.TempShopOTA.OtaTuniu == 1) {
+                                openTab("http://www.tuniu.cn/nbooking/login.html", "途牛旅游网", true);
+                            }
+                            if (res.Data.TempShopOTA.OtamanGocity == 1) {
+                                openTab("http://www.tuniu.cn/nbooking/login.html", "芒果网", true);
+                            }
+                            if (res.Data.TempShopOTA.Otaletu == 1) {
+                                openTab("http://member.lotour.com/", "乐途旅游网", true);
+                            }
+                            if (res.Data.TempShopOTA.Otalvmama == 1) {
+                                openTab("http://ebooking.lvmama.com", "驴妈妈", true);
+                            }
+                            if (res.Data.TempShopOTA.Otaalitrip == 1) {
+                                openTab("http://ebooking.lvmama.com", "阿里旅游·去啊", true);
+                            }
+                            if (res.Data.TempShopOTA.OtaQunar == 0 && res.Data.TempShopOTA.OtaElong == 0
+                                    && res.Data.TempShopOTA.OtaMeituan == 0 && res.Data.TempShopOTA.OtaLy == 0
+                                    && res.Data.TempShopOTA.OtaTuniu == 0 && res.Data.TempShopOTA.OtamanGocity == 0
+                                    && res.Data.TempShopOTA.Otaletu == 0 && res.Data.TempShopOTA.Otalvmama == 0
+                                    && res.Data.TempShopOTA.Otaalitrip == 0) {
+                                openTab("http://yys.jdd365.cn/", "网客通", true);
+                            }
+                        } else {
+                            openTab("http://yys.jdd365.cn/", "网客通", true);
+                        }
+                    }
+                }
+            });
+        });
+
+
+        $(".menu ul li span").live("click", function () {
+            $(".menu ul li").removeClass("select");
+            $(this).parent().addClass("select");
+            var title = $(this).html();
+            if (title != "") {
+//                var res = postSynRequest("/services/basicservice.aspx", { title: title }, "SystemSet", "ModuleUseLogAdd");
+                var res = {"Data":null,"State":{"Data":null,"Des":null,"Errkey":null,"Success":true}};
+                if (!res.State.Success) {
+                    alert(res.State.Errkey);
+                }
+            }
+            if (title == "网客通") {
+//                var res = postSynRequest("/services/basicservice.aspx", null, "SystemSet", "TempShopOTAInit");
+                var res = {"Data":{"TempShopOTA":{"OtaQunar":1,"OtaElong":0,"OtaMeituan":0,"OtaLy":0,
+                    "OtaTuniu":0,"OtamanGocity":0,"Otaletu":1,"Otalvmama":0,"Otaalitrip":1}},"State":{"Data":null,"Des":null,"Errkey":null,"Success":true}};
+                if (res.State.Success) {
+                    if (res.Data.TempShopOTA != null) {
+                        if (res.Data.TempShopOTA.OtaQunar == 1) {
+                            openTab("http://ebooking.qunar.com/ebPage/login.html", "去哪儿", true);
+                        }
+                        if (res.Data.TempShopOTA.OtaElong == 1) {
+                            openTab("http://ebooking.elong.com/ebookingnew/newlogin.mvc/login", "艺龙", true);
+                        }
+                        if (res.Data.TempShopOTA.OtaMeituan == 1) {
+                            openTab("http://e.meituan.com/account/login", "美团", true);
+                        }
+                        if (res.Data.TempShopOTA.OtaLy == 1) {
+                            openTab("https://ebooking.ly.com/Home/Login?ReturnUrl=https://ebooking.ly.com/", "同程网", true);
+                        }
+                        if (res.Data.TempShopOTA.OtaTuniu == 1) {
+                            openTab("http://www.tuniu.cn/nbooking/login.html", "途牛旅游网", true);
+                        }
+                        if (res.Data.TempShopOTA.OtamanGocity == 1) {
+                            openTab("http://www.tuniu.cn/nbooking/login.html", "芒果网", true);
+                        }
+                        if (res.Data.TempShopOTA.Otaletu == 1) {
+                            openTab("http://member.lotour.com/", "乐途旅游网", true);
+                        }
+                        if (res.Data.TempShopOTA.Otalvmama == 1) {
+                            openTab("http://ebooking.lvmama.com", "驴妈妈", true);
+                        }
+                        if (res.Data.TempShopOTA.Otaalitrip == 1) {
+                            openTab("http://ebooking.lvmama.com", "阿里旅游·去啊", true);
+                        }
+                        if (res.Data.TempShopOTA.OtaQunar == 0 && res.Data.TempShopOTA.OtaElong == 0 && res.Data.TempShopOTA.OtaMeituan == 0 && res.Data.TempShopOTA.OtaLy == 0 && res.Data.TempShopOTA.OtaTuniu == 0 && res.Data.TempShopOTA.OtamanGocity == 0 && res.Data.TempShopOTA.Otaletu == 0 && res.Data.TempShopOTA.Otalvmama == 0 && res.Data.TempShopOTA.Otaalitrip == 0) {
+                            openTab("http://yys.jdd365.cn/", "网客通", true);
+                        }
+                    } else {
+                        openTab("http://yys.jdd365.cn/", "网客通", true);
+                    }
+                }
+            }
+            $("#main").attr("src", $(this).attr('data-url'));
+        });
+
+        $(".menu ul li em").live("click", function () {
+            var openUrl = $(this).prev().attr('data-url');
+            if ($("#main").attr("src").toString() == openUrl) {
+                $(".menu ul li").removeClass("select");
+                var first = $(".menu ul li")[0];
+                $(first).addClass("select");
+                main.window.location = $(first).find('span').attr('data-url');
+            }
+            $(this).parent().remove();
+        });
+//        var data = postSynRequest("/Services/BasicService.aspx", null, "Common", "GetLogonUser");
+        var data = {"Data":{"Id":36813,"Name":"张三","Account":"13588288482","Password":"5ec134fbc2a88a810ddf2a84f76764",
+            "Sex":0,"Email":"","Mobile":"13588288482","QQ":"","ShopId":32045,"ShopName":"滨江店","Address":null,"ComId":38482,
+            "LoginTime":"\/Date(1481711348000)\/","LogonDate":"星期三2016年12月14日","LoginIp":"117.149.14.7",
+            "CreateDate":"\/Date(1481074340000)\/","LoginCount":11,"Status":1,
+            "SessionId":"4fea838b-c9c2-49a8-9c40-f5227852e4d3","DbConnectString":"","UserType":3,"RoleId":"","WrongCount":0,
+            "WrongTime":null,"Source":1,"LoginType":1,"RoleName":"","ChangePwdTimes":1,"Imprest":0.00,"MacAddress":"",
+            "WechatLogin":0,"WechatOpenId":"osSfztyUasQl9X2N-Em0KVKJcrIY","WechatNickName":"南北宏","PMSVer":1,
+            "UpVersionDate":null,"PayMthodAuthority":"","GetPmsVer":1,"HasPermissionUrl":[],
+            "AllPermissionUrl":[
+                "/pms/pages/report/index.html",
+                "/pms/pages/customer/index.html",
+                "/pms/pages/book/index.html"
+                ,"/billinfor/conlivedy.html","/billinfor/changeroomdy.html","/report/membercardquery.html",
+                "t08/bill/stockinindex","t08/query/querybill"],
+            "AuthenticatedUrl":null,"WorkClassId":1000,"WorkClassName":"全天班","AppId":"","AppSecret":"","BusinessDate":null,
+            "Permission":"FT,FT001,FT002,FT003,FT005,FT006,FT007,FT008,FT009,FT010,FT011,FT012,FT013,FT014,FT015,FT016,KR,KR001,KR002,KR004,KR005,KRSY,CX,CX001,CX002,CX003,CX004,CX005,CX006,CX007,CX008,CX009,CX010,CX012,CX013,CX014,CX015,BB,BB001,BB002,BB003,BB004,BB005,BB006,BB007,BB008,BB009,BB010,BB011,BB012,BB013,BB014,BB015,BB016,BB017,BB018,BB019,XT,XT001,XT002,XT003,XT004,XT005,XT006,XT008,XT009,XT010,XT011,XT012,XT013,XT014,XT015,DX,KC,YD,HY,HY001,HY002,HY003,HY004,HY005,HY006,HY007,HYSY,HY008,XY,XY001,XY002,XY003,XY004,XY005,XYSY,FZ,WK",
+            "MacList":null,"PmsVersion":0,"IsHotel":false,"PmsLogo":""},
+            "State":{"Success":true,"Des":null,"Errkey":null,"Data":null}};
+        if (data != null && data.State.Success) {
+            if (data.Data.PmsVersion == 1) {
+                $("#ShopPoint").hide();
+                $("#lreport").hide();
+            }
+            else {
+                $("#ShopPoint").show();
+                $("#lreport").show();
+            }
+            if (!data.Data.IsHotel && data.Data.PmsVersion == 1) {//连锁登录，集团账号，只保留报表和设置
+                $("#mb_table li").hide();
+                $("#mb_table li.shezh").show();
+                $("#mb_table li.baob").show();
+                //将隐藏的全部移除
+                $("#mb_table li").each(function () {
+                    if ($(this).is(":hidden")) $(this).remove();
+                });
+                $(".scrollable_demo").empty();
+                $("#mb_table li.baob").click();
+                setTimeout(function () { $(".scrollable_demo li").find("em").remove(); }, 2000);
+            }else{
+                ControllerIndexPageDom(data.Data);
+            }
+
+            $(".LogonShopName").html("酒店名称：" + data.Data.ShopName);
+            $(".LogonUserAccount").html("用户名：" + data.Data.Account);
+            $(".LogonUserName").html("姓名：" + data.Data.Name);
+            $(".LogonDate").html(data.Data.LogonDate);
+            $(".WorkClassName").html("班次：" + data.Data.WorkClassName);
+            shopId = data.Data.ShopId;
+            if (data.Data.LoginCount <= 1) {//新手指引
+                document.getElementById('light').style.display = 'block';
+                document.getElementById('fade').style.display = 'block'
+//                document.main.location = "./pages/set/index.html";
+                openTab('./pages/set/index.html', "设置", true);
+                setTimeout(function () {
+                    document.main.set_main.location = "./pages/set/room.html";
+                    var doc = document.main.menu_left.document;
+                    $(doc).find(".set_lf a").removeClass('select');
+                }, 500);
+            }
+            if (data.Data.PmsLogo != undefined && data.Data.PmsLogo != "") {
+                $("#head .logo").css("backgroundImage", "url(" + data.Data.PmsLogo + ")");
+            }
+        }
+        //算商城总积分
+//        var data = postSynRequest("/Services/BasicService.aspx", null, "CrmShopPointUsl", "GetPointAccount");
+        var data = {"Data":{"AllSocre":26.00,"PmsVersion":"0"},"State":{"Success":true,"Des":null,"Errkey":null,"Data":null}};
+        if (data != null && data.State.Success) {
+            if (data.Data.PmsVersion == "0") {
+                $("#a_shoppoint").html("积分商城(" + data.Data.AllSocre + ")");
+                $("#ShopPoint").show();
+                $("#lreport").show();
+            } else {
+                $("#ShopPoint").hide();
+                $("#lreport").hide();
+            }
+        }
+        else {
+            $("#a_shoppoint").html("积分商城( - )");
+        }
+
+        var ShiftType = undefined;
+        //交班
+        $("#shift").click(function () {
+            if (ShiftType == undefined) {
+                var data = postSynRequest("/Services/BasicService.aspx", null, "ShiftUsl", "GetShiftType");
+                ShiftType = data.Data;
+            }
+            if (ShiftType == 1)
+                openWin('/BillInfor/ShiftSuccessionByBill.html?r=' + Math.random(), 1000, 540);
+            else
+                openWin('/BillInfor/ShiftSuccession.html?r=' + Math.random(), 1000, 540);
+        });
+        //记事本
+        $("#a_NoteBool").click(function () {
+            openWin('/FrontOp/NoteBook.html?r=' + Math.random(), 615, 490);
+        });
+        //失物招领
+        $("#a_LostAndFound").click(function () {
+            openTab('/FrontOp/LostAndFound.html', "失物招领", true);
+        });
+        //版本更新
+        $("#Version_update").click(function () {
+            openTab('/FrontOp/Version_update.html', "版本更新", true);
+        });
+        //积分商城
+        $("#a_shoppoint").click(function () {
+            openTab('/ShopPoint/index.html?r=' + Math.random(), "积分商城", true);
+        });
+        //功能商城
+        $("#a_appmarket").click(function () {
+            openTab('/APPMarketRequest.aspx?r=' + Math.random(), "应用市场", true);
+        })
+        $("#b_appmarket").click(function () {
+            openTab('/APPMarketRequest.aspx?r=' + Math.random(), "应用市场", true);
+        })
+        $("#c_appmarket").click(function () {
+            openTab('/APPMarketRequest.aspx?DetialId=7&r=' + Math.random(), "应用市场", true);
+        })
+
+        //审核后首次登录提示修改密码
+//        postRequest("/Services/BasicService.aspx", null, "UserUSL", "CheckLoginFirst", false, function (loginData) {
+            var loginData = {"Data":null,"State":{"Data":null,"Des":null,"Errkey":null,"Success":false}};
+            if (loginData.State.Success) {
+                if (confirm("您的帐号已审核通过，为保证您的帐号安全，请进行即时修改登录密码！")) {
+                    openWin('/Set/Password.html?ac=1&r=' + Math.random(), 450, 280);
+                }
+                else {
+                    postRequest("/Services/BasicService.aspx", null, "UserUSL", "ChangeLoginFirst", false, function (data) { });
+                }
+            }
+//        });
+
+        //微营销菜单
+        $("#lreport").click(function () {
+            var res = postSynRequest("/Services/BasicService.aspx", null, "BaseData", "GetWeHotelUrl");
+            if (res.State.Success) {
+                openTab(res.Data, "微酒店", true);
+            }
+        });
+    });
+
+    function openTab(url, title, isselect) {
+        var hasOpen = false;
+        var hasTab = undefined;
+        $(".menu ul li span").each(function () {
+            if ($(this).html() == title) {
+                hasOpen = true;
+                hasTab = this;
+                if ($(hasTab).attr('data-url') != url) {
+                    $(hasTab).attr('data-url', url);
+                }
+                return false;
+            }
+        });
+        if (!hasOpen) {
+            if (!isselect) {
+                $(".menu ul").append('<li><span data-url="' + url + '">' + title + '</span><em></em></li>');
+            }
+            else {
+                $(".menu ul li").removeClass("select");
+                $(".menu ul").append('<li class="select"><span data-url="' + url + '">' + title + '</span><em></em></li>');
+                $("#main").attr("src", url);
+            }
+        }
+        else if (isselect && hasTab != undefined) {
+            $(".menu ul li").removeClass("select");
+            $(hasTab).parent().addClass("select");
+            $("#main").attr("src", $(hasTab).attr('data-url'));
+        }
+    }
+
+    //退出
+    function LogonOut() {
+        if (!confirm("是否确认退出简单点酒店管理系统?")) { return; }
+        postRequest("/Services/BasicService.aspx", null, "SSO", "LonginOut", false, function (data) {
+            if (!data.State.Success) {
+                data.State.Des;
+                return false;
+            }
+            if (data.Data.PmsVersion)
+                window.location = "/BasicInfo/glogin.html";
+            else
+                window.location = "/BasicInfo/login.html";
+        });
+    }
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            //帮助中心处理
+            var userAgent = window.navigator.userAgent.toLowerCase();
+            if (userAgent == "jchotelclient") {
+                $("#IEHelpLink").hide();
+                $("#ClientHelpLink").show();
+                $("#IEServiceLink").hide();
+                $("#ClientServiceLink").show();
+            }
+            else {
+                $("#IEHelpLink").show();
+                $("#ClientHelpLink").hide();
+                $("#IEServiceLink").show();
+                $("#ClientServiceLink").hide();
+            }
+            //otaLoginStatus(0);
+            rotateYDIV();
+        });
+
+
+        //积分3D旋转
+        var x, y, n = 0, ny = 0, rotINT, rotYINT
+        function rotateYDIV() {
+            y = document.getElementById("imgs1")
+            clearInterval(rotYINT)
+            rotYINT = setInterval("startYRotate()", 5)
+        }
+        function startYRotate() {
+            ny = ny + 1
+            y.style.transform = "rotateY(" + ny + "deg)"
+            y.style.webkitTransform = "rotateY(" + ny + "deg)"
+            y.style.OTransform = "rotateY(" + ny + "deg)"
+            y.style.MozTransform = "rotateY(" + ny + "deg)"
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".costs_close_1").click(function () {
+                $(".costs_4").hide();
+            });
+            setTimeout(costsClose, 30000)
+        });
+        function costsClose() {
+            $(".costs_4").hide();
+        }
+    </script>
+</head>
+<body>
+<div class="main_left" style="display:none">
+    <div class="main_02"><a href="javascript:" class="bar">问<br />题<br />解<br />答</a>
+        <ul>
+            <li><a href="/BasicInfo/help/help_137.html" target="_blank">系统速度突然慢、卡如何处理？</a></li>
+            <li><a href="/BasicInfo/help/help_131.html" target="_blank">携程等OTA渠道订单如何处理？</a></li>
+            <li><a href="/BasicInfo/help/help_136.html" target="_blank">携程ebk直连房型禁用后如何操作？</a></li>
+            <li><a href="/BasicInfo/help.html" target="_blank">酒店系统日常操作指引</a></li>
+        </ul>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('.main_left').css('right', '-262px');
+        $('.main_left').show();
+        var expanded = true;
+        $('.bar').click(function () {
+            if (expanded) {
+                $('.main_left').animate({ right: '0' }, 500);
+                $('.bar').css('background-position', '-0px 0px');
+
+            } else {
+                $('.main_left').animate({ right: '-262px' }, 500);
+                $('.bar').css('background-position', '-25px 0px');
+            }
+            expanded = !expanded;
+        });
+    });
+</script>
+<!--头部-->
+<div class="head" id="head">
+    <div class="logo"></div>
+    <a href="###" id="lreport" style="background:url(images/2015_3.png) center no-repeat; display:none; width:150px; height:70px; float:left">&nbsp;</a>
+    <div class="top_icon" style="margin-left:550px; margin-right:10px" id="menulabel">
+        <a id="btn_pre"><img src="images/left.png" width="14" height="30" class="mb30" alt="" /></a>
+        <a id="btn_next"><img src="images/right.png" width="14" height="30" class="mb30" alt="" /></a>
+        <div class="mb_div">
+            <ul id="mb_table">
+                <li class="ftt select" data-order="0">房态图</li>
+                <li class="zhk" data-order="1">住客</li>
+                <li class="vip" data-order="2">会员</li>
+                <li class="xieyi" data-order="3">协议</li>
+                <!--<li class="fzhk" data-order="4">非住客帐</li>-->
+                <li class="yud" data-order="5">预订</li>
+                <li class="baob" data-order="7">报表</li>
+                <li class="duanxin" data-order="8">短信</li>
+                <!--<li class="kuceng" data-order="9">库存</li>-->
+                <li class="shezh" data-order="10">设置</li>
+                <!--<li class="hp" data-order="11">慧评</li>-->
+                <li class="wkt" data-order="12">网客通</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+<!--end-->
+
+<!--菜单-->
+<div class="menu fontYaHei">
+    <div id="scrollable">
+        <a class="prev" href="#"></a>
+        <a class="next" href="#"></a>
+        <div class="items">
+            <ul style="position: absolute; width: 200000em; left: 0px;" class="scrollable_demo">
+                <li class="select"><span data-url="/pms/pages/frontOp/index.html">房态图</span></li>
+                <!--<li class="select"><span data-url="/pms/pages/customer/index.html">客人</span><em></em></li>-->
+            </ul>
+            <br clear="all" />
+        </div>
+    </div>
+</div>
+<!--end-->
+<iframe src="/pms/pages/frontOp/index.html" width="100%" frameborder="0" id="main" name="main" scrolling="auto" frameborder="0"></iframe>
+<!--底部-->
+<div class="footer">
+    <div class="fl">
+        <span class="LogonShopName">酒店名：</span>
+            <span id="ShopPoint">
+                <img src="images/money.png" id="imgs1" alt="" style="float: left; margin-top: 6px; margin-right: 5px; transform: rotateY(60deg);" />
+                <a href="javascript:void(0);" id="a_shoppoint">积分商城（-）</a>
+            </span>
+            <span style=" position:relative">
+                <img src="images/market.png" alt="" style="float: left; margin-top:8px; margin-right: 5px; width:18px" />
+                <a href="javascript:void(0);" id="a_appmarket">应用市场</a>
+
+                    <!--房价牌-->
+                  <!--  <div class="costs_4" style="left: 15px; z-index: 999999; visibility: visible; position:absolute; bottom:32px; left:-72px ">
+                        <a href="javascript:void(0);" id="b_appmarket">
+                            <img width="242" border="0" src="images/tagprices.png" alt="" /></a>
+                        <div class="costs_close_1" style="position: absolute; top: -5px; right: -5px; cursor: pointer; z-index: 999999;width:17px; height:17px; background:url(images/costs_close.png) 0px -58px no-repeat" ></div>
+                    </div>
+                   <style type="text/css">
+                      .costs_close_1{ transition:width 2s, height 2s;-moz-transition:width 2s, height 2s, -moz-transform 1s; -webkit-transition:width 2s, height 2s, -webkit-transform 1s; -o-transition:width 2s, height 2s, -o-transform 1s;}
+                      .costs_close_1:hover{-webkit-transform: rotate(360deg);-moz-transform: rotate(360deg);-ms-transform: rotate(360deg);transform: rotate(360deg);}
+                   </style>-->
+
+                    <!--end-->
+
+
+            </span>
+        <span class="LogonUserAccount">用户名：</span>
+        <span class="LogonUserName">姓名：</span>
+        <span class="LogonDate" style="display: none">周二&nbsp;&nbsp;2015年01月07日</span>
+        <span class="WorkClassName"></span>
+    </div>
+    <div class="fr">
+        <div style="float: right">
+            <a target="_blank" id="IEServiceLink" href="http://wpa.qq.com/msgrd?v=3&uin=1531910069&site=qq&menu=yes">
+                <img border="0" src="images/pa.jpg" alt="在线客服" title="在线客服" style="margin-top: 7px; float: left" />
+            </a>
+            <a id="ClientServiceLink" href="javascript:void(0);" onclick="clientOpen('http://wpa.qq.com/msgrd?v=3&uin=1531910069&site=qq&menu=yes', 0)">
+                <img border="0" src="images/pa.jpg" alt="在线客服" title="在线客服" style="margin-top: 7px; float: left" />
+            </a>
+            <span>|</span>
+            <a href="javascript:void(0);" id="shift">
+                <img src="images/covered.jpg" style="margin-top: 7px; float: left" alt="交班" /></a>
+            <span>|</span>
+            <a href="javascript:void(0);" id="a_NoteBool">记事本</a>
+            <span>|</span>
+            <a href="javascript:void(0);" id="a_LostAndFound">失物招领</a>
+            <span>|</span>
+            <a href="javascript:void(0);" id="Version_update">版本更新</a>
+            <span>|</span>
+            <a href="/BasicInfo/help.html" id="IEHelpLink" target="_blank">帮助中心</a>
+            <span>|</span>
+            <a href="javascript:void(0);" id="ClientHelpLink" onclick="clientOpen('/BasicInfo/help.html', 1)">帮助中心</a>
+            <a href="javascript:void(0);" onclick="LogonOut()">退出</a>
+        </div>
+    </div>
+</div>
+<!--end-->
+<div class="white_content pwin" style="cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+
+    <div class="close" tag="pwin">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('pwin');" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+<div class="black_overlay pwin_black"></div>
+
+<div class="white_content pwin2" style="z-index: 1004; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+    <div class="close" tag="pwin2">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('pwin2');" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+<div class="black_overlay pwin2_black" style="z-index: 1003;"></div>
+
+<div class="white_content paymentwin" style="z-index: 1006; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+    <div class="close" tag="paymentwin">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('paymentwin');" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+
+<div class="white_content authorizationwin" style="z-index: 1006; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+
+</div>
+<div class="black_overlay authorizationwin_black" style="z-index: 1005;"></div>
+
+<div class="white_content wepaywin" style="z-index: 1008; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+    <div class="close" tag="wepaywin">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('wepaywin');top.activeWin.location.reload();" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+<div class="black_overlay wepaywin_black" style="z-index: 1007;"></div>
+
+
+<!-- 支付div -->
+<div class="white_content paywin" style="z-index: 1010; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+    <div class="close" tag="paywin">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('paywin');" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+<div class="black_overlay paywin_black" style="z-index: 1009;"></div>
+
+
+
+<div id="divLoading" class="black_overlay">
+    <img src="images/loading.gif" alt="数据加载中" style="left: 42%; top: 42%; position: absolute;" />
+</div>
+
+<div class="white_content pwin3" style="z-index: 1007; cursor: pointer;">
+    <!--<div class="louceng">
+    </div>-->
+    <div class="close" tag="pwin3">
+        <a href="javascript:void(0)" onclick="cancelEvent(event);closeWin('pwin3');" style="cursor: pointer;">&nbsp;</a>
+    </div>
+</div>
+<div class="black_overlay pwin3_black" style="z-index: 1006;"></div>
+
+<!--弹出窗口-->
+<div id="light" class="novice">
+    <div class="step_one">
+        <div class="next_step step_1"></div>
+        <div class="close">
+            <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">&nbsp;</a>
+        </div>
+    </div>
+
+    <div class="step_two">
+        <div class="next_step step_2"></div>
+        <div class="close">
+            <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">&nbsp;</a>
+        </div>
+    </div>
+
+    <div class="step_three">
+        <div class="next_step step_3"></div>
+        <div class="close">
+            <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">&nbsp;</a>
+        </div>
+    </div>
+
+    <div class="step_four">
+        <div class="next_step step_4"></div>
+        <div class="close">
+            <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">&nbsp;</a>
+        </div>
+    </div>
+
+</div>
+
+<div id="fade" class="black_overlay"></div>
+
+
+
+<!--加载弹出-->
+<div data-id="divCircles" style="position:absolute; left:0px; top:0px; bottom:0px; right:0px; z-index:99999; text-align:center;display:none;">
+    <div style="width:100%; background:#000; opacity:0.6; height:100%;position:absolute; left:0px; top:0px; bottom:0px; right:0px; z-index:1"></div>
+    <img src="images/spinning-circles.svg" width="60" alt=""  style="position:absolute; left:50%; margin-left:-30px; top:50%; margin-top:-50px; z-index:2; opacity:0.8"/>
+    <p style="display:block; width:100%; text-align:center; color:#fff; font-size:14px;position:absolute; left:0;  top:50%; margin-top:30px; z-index:2; font-family:Microsoft YaHei; letter-spacing:2px;">正在上传发票数据,请耐心等待...</p>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".step_1").click(function () {
+            $(".step_one").hide();
+            $(".step_two").show();
+        });
+
+        $(".step_2").click(function () {
+            $(".step_two").hide();
+            document.main.window.location = "./pages/frontOp/index.html";
+            $(".step_three").show();
+        });
+
+        $(".step_3").click(function () {
+            $(".step_three").hide();
+            $(".step_four").show();
+        });
+
+        $(".step_4").click(function () {
+            $(".step_four").hide();
+            $("#light").hide();
+            $("#fade").hide();
+        });
+
+    });
+</script>
+
+
+<!--消息提醒-->
+<div class="message none" id="remindbox">
+    <div class="black_bg"></div>
+    <div class="style">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="remindMessage();">没有新的提醒信息</a></li>
+        </ul>
+    </div>
+    <div class="close">
+        <a href="javascript:void(0)" onclick="hideRemindBox();">
+            <img src="images/close.png" />
+        </a>
+    </div>
+</div>
+<div class="message_img " id="remindicon">
+    <a href="javascript:void(0)" onclick="showRemindBox();">
+        <img src="images/message.png" id="showimg" /></a>
+    <div class="number">0</div>
+</div>
+<!--左右移动
+<script type="text/javascript">
+    function dis_width() {
+        pwidth = $("#head").width();
+        if (pwidth < 1500) {
+            $("#btn_pre").css("display", "block");
+            $("#btn_next").css("display", "block");
+        }
+        if (pwidth < 1500 && pwidth > 1200) {
+            $(".mb_div").css("width", 650 + "px");
+        }
+        else if (pwidth < 1200) {
+            $(".mb_div").css("width", 380 + "px");
+        }
+
+        simple_width = 80;
+        show_all_num = 11;
+        mb_table_width = simple_width * show_all_num * 2;
+        s_left = 0;
+
+        $("#btn_pre").bind("click", function () { move_go(1); });
+        $("#btn_next").bind("click", function () { move_go(0); });
+        function move_go(flax) {
+            speed = 300;
+            if (flax == 0) {
+                s_left = s_left - simple_width;
+                if (s_left < simple_width * show_all_num * (-1)) {
+                    s_left = simple_width * (-1);
+                    $("#mb_table").animate({ left: "0px" }, 2);
+                }
+            }
+            if (flax == 1) {
+                s_left = s_left + simple_width;
+                if (s_left > 0) {
+                    s_left = show_all_num * simple_width * (-1);
+                    s_left_s = s_left + "px";
+                    $("#mb_table").animate({ left: s_left_s }, 2);
+                    s_left = s_left + simple_width;
+                }
+            }
+            s_left_s = s_left + "px";
+            $("#mb_table").animate({ left: s_left_s }, speed, function () { });
+        }
+
+    }
+</script>-->
+<script language="javascript" type="text/javascript">
+    (function ($) {
+        $.fn.extend({
+            Scroll: function (opt, callback) {
+                if (!opt) var opt = {};
+                var _btnleft = $(opt.left);
+                var _btnright = $(opt.right);
+                var timerID;
+                var _this = this.eq(0).find("ul").eq(0);
+                var lineW = _this.find("li:first").width(), //获取列宽
+                        line = opt.line ? parseInt(opt.line, 10) : parseInt(_this.width() / lineW, 10);
+
+                //每次滚动的列数，默认为一屏，即父容器列宽
+                speed = opt.speed ? parseInt(opt.speed, 10) : 500; //滚动速度，数值越大，速度越慢（毫秒）
+                timer = opt.timer ? parseInt(opt.timer, 10) : 3000; //滚动的时间间隔（毫秒）
+                if (line == 0) line = 1;
+                var upWidth = 0 - line * lineW;
+
+                //滚动函数
+                var scrollLeft = function () {
+                    if (!_this.is(":animated")) {
+                        _this.animate({ left: upWidth }, speed, function () {
+                            for (i = 1; i <= line; i++) {
+                                _this.find("li:first").appendTo(_this);
+                            }
+                            _this.css({ left: 0 });
+                        });
+                    }
+                }
+                var scrollRight = function () {
+                    if (!_this.is(":animated")) {
+                        for (i = 1; i <= line; i++) {
+                            _this.find("li:last").show().prependTo(_this);
+                        }
+                        _this.css({ left: upWidth });
+                        _this.animate({
+                            left: 0
+                        }, speed, function () {
+                        });
+                    }
+                }
+                //Shawphy:自动播放
+                var autoPlay = function () {
+                    //if (timer) timerID = window.setInterval(scrollLeft, timer);
+                };
+                var autoStop = function () {
+                    //if (timer) window.clearInterval(timerID);
+                };
+
+                //鼠标事件绑定
+                _this.hover(autoStop, autoPlay).mouseout();
+                _btnleft.css("cursor", "pointer").click(scrollLeft).hover(autoStop, autoPlay);
+                _btnright.css("cursor", "pointer").click(scrollRight).hover(autoStop, autoPlay);
+            }
+        })
+    })(jQuery);
+    $(document).ready(function () {
+        $("#scrollable").Scroll({ line: 1, speed: 500, timer: 3000, left: ".next", right: ".prev" });
+        $("#menulabel").Scroll({ line: 1, speed: 500, timer: 3000, left: "#btn_next", right: "#btn_pre" });
+    });
+</script>
+
+<!--<div class="costs_1" style="position:fixed; top:50%; left:50%; margin-left:-400px;margin-top:-250px; display:none; z-index: 999999;">
+    <div style="position:relative">
+        <img width="800"  border="0" src="../images/login/to_5.png" alt="" />
+        <div class="costs_3" style="position: absolute; top: -40px; right:10px; cursor: pointer; z-index: 999999;width:30px; height:30px; background:url(../images/login/to_4.png) 0px 0px no-repeat" ></div>
+    </div>
+</div>
+<div class="costs_back" style="background: rgb(0, 0, 0) none repeat scroll 0% 0%; position: fixed; left: 0px; top: 0px; right: 0px; bottom: 0px; filter:alpha(opacity=70);-moz-opacity:0.7;opacity:0.7; display:none; z-index: 999998;"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var IsLogin = $.cookie("IsLogin");
+        if (IsLogin == "123") {
+            $(".costs_1").show();
+            $(".costs_back").show();
+        }
+        $(".costs_3").click(function () {
+            $(".costs_1").hide();
+            $(".costs_back").hide();
+            $.cookie("IsLogin", "");
+        });
+    });
+</script> -->
+
+
+
+<!--房价牌左右摇摆-->
+<style type="text/css">
+    .swing{
+        -webkit-animation:swinging 10s ease-in-out 0s infinite;
+        -moz-animation:swinging 10s ease-in-out 0s infinite;
+        animation:swinging 10s ease-in-out 0s infinite;
+        -webkit-transform-origin:50% 0;
+        -moz-transform-origin:50% 0;
+        transform-origin:50% 0;
+    }
+
+    @-webkit-keyframes swinging{
+        0% { -webkit-transform: rotate(0); }
+        5% { -webkit-transform: rotate(10deg); }
+        10% { -webkit-transform: rotate(-9deg); }
+        15% { -webkit-transform: rotate(8deg); }
+        20% { -webkit-transform: rotate(-7deg); }
+        25% { -webkit-transform: rotate(6deg); }
+        30% { -webkit-transform: rotate(-5deg); }
+        35% { -webkit-transform: rotate(4deg); }
+        40% { -webkit-transform: rotate(-3deg); }
+        45% { -webkit-transform: rotate(2deg); }
+        50% { -webkit-transform: rotate(0); }
+        100% { -webkit-transform: rotate(0); }
+    }
+
+    @-moz-keyframes swinging{
+        0% { -moz-transform: rotate(0); }
+        5% { -moz-transform: rotate(10deg); }
+        10% { -moz-transform: rotate(-9deg); }
+        15% { -moz-transform: rotate(8deg); }
+        20% { -moz-transform: rotate(-7deg); }
+        25% { -moz-transform: rotate(6deg); }
+        30% { -moz-transform: rotate(-5deg); }
+        35% { -moz-transform: rotate(4deg); }
+        40% { -moz-transform: rotate(-3deg); }
+        45% { -moz-transform: rotate(2deg); }
+        50% { -moz-transform: rotate(0); }
+        100% { -moz-transform: rotate(0); }
+    }
+
+    @keyframes swinging{
+        0% { transform: rotate(0); }
+        5% { transform: rotate(10deg); }
+        10% { transform: rotate(-9deg); }
+        15% { transform: rotate(8deg); }
+        20% { transform: rotate(-7deg); }
+        25% { transform: rotate(6deg); }
+        30% { transform: rotate(-5deg); }
+        35% { transform: rotate(4deg); }
+        40% { transform: rotate(-3deg); }
+        45% { transform: rotate(2deg); }
+        50% { transform: rotate(0); }
+        100% { transform: rotate(0); }
+    }
+    .swing_div{position:fixed; top:72px; right:150px}
+    .swing_a{position:absolute; top:7px; left:97px; display:block; width:30px; height:30px}
+</style>
+<div class="swing_div" style="display:none">
+    <a href="javascript:void(0);" title="摇摆展示" id="c_appmarket"><img class="swing" src="images/swing_01.png" alt="" /></a>
+    <a href="javascript:void(0);" class="swing_a">&nbsp;</a>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".swing_a").click(function(){
+            $(".swing_div").hide();
+        });
+        $("#c_appmarket").click(function () {
+            $(".swing_div").hide();
+        });
+    });
+</script>
+
+
+<!--去哪儿直连弹出框-->
+<div class="swing_03div" style="position:fixed; top:50%; left:50%; margin-left:-440px;margin-top:-240px;  z-index:9999;display:none">
+    <img class="qunaershow" style="cursor:pointer" src="images/swing_03.png" alt="" />
+    <a href="javascript:void(0);" class="swing_03a" style="position:absolute; top:0px; right:0px; display:block; width:30px; height:30px;">&nbsp;</a>
+</div>
+<div class="swing_03div_balck" style="position:fixed;left:0px; top:0px; bottom:0px; right:0px; background:#000; opacity:0.5;;display:none"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var IsIndex = $.cookie("IsIndex");
+        if (IsIndex != null && IsIndex != "" && IsIndex != undefined) {
+            $(".swing_03div").show();
+            $(".swing_03div_balck").show();
+        }
+        $(".swing_03a").click(function () {
+            $(".swing_03div").hide();
+            $(".swing_03div_balck").hide();
+            $.cookie("IsIndex", "");
+        });
+
+        $(".qunaershow").click(function () {
+            top.openTab('/APPMarketRequest.aspx?DetialId=17&r=' + Math.random(), "应用市场", true);
+            $(".swing_03div").hide();
+            $(".swing_03div_balck").hide();
+            $.cookie("IsIndex", "");
+        })
+    });
+</script>
+</body>
+</html>
